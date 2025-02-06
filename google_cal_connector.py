@@ -21,7 +21,6 @@ class googleCalCon:
         self.authenticate()
         self.service = build('calendar', 'v3', credentials=self.creds)
         self.events = self.getEntries()
-        self.createEntry("test","test","test","2025-02-07 14:00","2025-02-07 15:00")
     
     def authenticate(self):
         # The file token.pickle stores the user's access and refresh tokens, and is

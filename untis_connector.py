@@ -33,16 +33,23 @@ class exporter:
         elements = raw_data['elements']
         
         elementMap = self.getElementMap(elements)
-    
+        parsedPeriods = []
         for period in periods:
             element_states = period['elements']
             #elements.state [REGULAR|SUBSTITUTED]
             #cellstate [CANCEL|STANDARD|ROOMSUBSTITUTION]
-            print('---------------------------------------')
-            print(elementMap[element_states[1]['id']]['name'])
-            print(elementMap[element_states[2]['id']]['name'])
-            print(str(period['date'])+":",period['startTime'], "->", period['endTime'])
-            
+            #print('---------------------------------------')
+            #print(elementMap[element_states[1]['id']]['name'])
+            #print(elementMap[element_states[2]['id']]['name'])
+            #print(str(period['date'])+":",period['startTime'], "->", period['endTime'])
+            parsedPeriods.append({'name':elementMap[element_states[1]['id']]['name'], 
+                                  'location': elementMap[element_states[2]['id']]['name'],
+                                  'periodText': period['periodText'],
+                                  'cellState': period['cellState'],
+                                  'date':str(period['date']),
+                                  'start':period['startTime'],
+                                  'end':period['endTime']})
+        return parsedPeriods
 exporterClass = exporter()
 
 exporterClass.getData()
