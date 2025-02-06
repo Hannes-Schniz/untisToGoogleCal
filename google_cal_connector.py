@@ -21,8 +21,7 @@ class googleCalCon:
         self.authenticate()
         self.service = build('calendar', 'v3', credentials=self.creds)
         self.events = self.getEntries()
-        self.createEntry(0,0,0,0,0)
-        
+        self.createEntry("test","test","test","2025-02-07 14:00","2025-02-07 15:00")
     
     def authenticate(self):
         # The file token.pickle stores the user's access and refresh tokens, and is
@@ -34,7 +33,7 @@ class googleCalCon:
         # If there are no (valid) credentials available, let the user log in.
         if not self.creds or not self.creds.valid:
             if self.creds and self.creds.expired and self.creds.refresh_token:
-                creds.refresh(Request())
+                self.creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     'credentials.json', self.SCOPES)
@@ -47,15 +46,15 @@ class googleCalCon:
     def createEntry(self, name, location, description, start, end):
         # Feature 2: Create a new calendar
         event = {
-            'summary': 'Python Meeting',
-            'location': '800 Howard St., San Francisco, CA 94103',
-            'description': 'A meeting to discuss Python projects.',
+            'summary': name,
+            'location': location,
+            'description': description,
             'start': {
-                'dateTime':  datetime.strptime("25/02/07 15:00:00",'%y/%m/%d %H:%M:%S').isoformat(),
+                'dateTime':  datetime.strptime(start,'%Y-%m-%d %H:%M').isoformat(),
                 'timeZone': 'Europe/Berlin',
             },
             'end': {
-                'dateTime':  datetime.strptime("25/02/07 16:00:00",'%y/%m/%d %H:%M:%S').isoformat(),
+                'dateTime':  datetime.strptime(end,'%Y-%m-%d %H:%M').isoformat(),
                 'timeZone': 'Europe/Berlin',
             },
         }
@@ -65,7 +64,7 @@ class googleCalCon:
     
     
     def getEntries(self):
-        now = (datetime.utcnow()+timedelta(hours=2)).isoformat() + 'Z'
+        now = (datetime.utcnow()+timedelta(hours=2)).isoformat() + '+02:00'
         events_result = self.service.events().list(calendarId=environment.calendarID, timeMin= now,
                                           maxResults=10, singleEvents=True,
                                           orderBy='startTime').execute()
@@ -86,6 +85,26 @@ class googleCalCon:
         for param in params:
             if eventOne[param] != eventTwo[param]:
                 return False
+        
+        if not self.compareDatetime(eventOne['start']['dateTime'],eventTwo['start']['dateTime']):
+            return False
+        
+        if not self.compareDatetime(eventOne['end']['dateTime'],eventTwo['end']['dateTime']):
+            return False
+        
         return True
+    
+    def compareDatetime(self,datetime, newTime):
+        split = datetime.split('T')
+        newSplit = newTime.split('T')
+        if split[0] != newSplit[0]:
+           return False
+        time = split[1].split('-')
+        timeWithOffset = int(time[0].split(':')[0])+int(time[1].split(':')[0]) +1
+        if int(newSplit[1].split(':')[0]) != timeWithOffset:
+            print(timeWithOffset,newSplit[1].split(':')[0] )
+            return False
+        return True
+       
         
         
