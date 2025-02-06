@@ -1,10 +1,13 @@
 from connectors.untis_connector import exporter
 from connectors.google_cal_connector import googleCalCon
+from datetime import datetime
 
 untis = exporter()
 googleCal = googleCalCon()
 
-periods = untis.getData()
+currDate = datetime.utcnow().strftime('%Y-%m-%d')
+
+periods = untis.getData(date=currDate)
 
 def genTime(date, time):
     dateTime = date[:4]+'-'+date[4:6]+'-'+date[6:8]+' '

@@ -5,7 +5,6 @@ class exporter:
     classID = '3306'
 
     url = "https://erato.webuntis.com/WebUntis/api/public/timetable/weekly/data"
-    options = "?elementType=1&elementId="+classID+"&date=2025-02-03&formatId=2"
     
     
     headers = { 'accept': 'application/json', 
@@ -21,11 +20,11 @@ class exporter:
         return elementMap
             
 
-    def getData(self):
+    def getData(self, date):
         
-
-        response = requests.get(self.url + self.options, headers=self.headers)
-
+        options = "?elementType=1&elementId="+self.classID+"&date="+date+"&formatId=2"
+        
+        response = requests.get(self.url + options, headers=self.headers)
 
         raw_data = response.json()['data']['result']['data']
     
@@ -50,6 +49,3 @@ class exporter:
                                   'start':period['startTime'],
                                   'end':period['endTime']})
         return parsedPeriods
-exporterClass = exporter()
-
-exporterClass.getData()
