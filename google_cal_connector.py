@@ -95,11 +95,15 @@ class googleCalCon:
         return True
     
     def compareDatetime(self,datetime, newTime):
+        #split time from date
         split = datetime.split('T')
         newSplit = newTime.split('T')
+        #compare dates
         if split[0] != newSplit[0]:
-           return False
+            return False
+        #split time and offset
         time = split[1].split('-')
+        #calc offset +1 (winter time?)
         timeWithOffset = int(time[0].split(':')[0])+int(time[1].split(':')[0]) +1
         if int(newSplit[1].split(':')[0]) != timeWithOffset:
             print(timeWithOffset,newSplit[1].split(':')[0] )
