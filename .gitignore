@@ -1,2 +1,4 @@
 environment.py
 test*
+
+__pycache__/
