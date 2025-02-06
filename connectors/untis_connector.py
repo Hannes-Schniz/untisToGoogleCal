@@ -2,10 +2,7 @@ import requests
 
 class exporter:
 
-    classID = '3306'
-
     url = "https://erato.webuntis.com/WebUntis/api/public/timetable/weekly/data"
-    
     
     headers = { 'accept': 'application/json', 
     'cookie': 'schoolname="_aGgtc2NodWxlLWthcmxzcnVoZQ==";',
@@ -20,9 +17,9 @@ class exporter:
         return elementMap
             
 
-    def getData(self, date):
+    def getData(self, date, classID):
         
-        options = "?elementType=1&elementId="+self.classID+"&date="+date+"&formatId=2"
+        options = "?elementType=1&elementId="+classID+"&date="+date+"&formatId=2"
         
         response = requests.get(self.url + options, headers=self.headers)
 
