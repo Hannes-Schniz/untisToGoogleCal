@@ -2,3 +2,4 @@ environment.py
 test*
 credentials*
 __pycache__/
+token.pickle
