@@ -1,4 +1,4 @@
-environment.py
+secrets.py
 test*
 credentials*
 __pycache__/
