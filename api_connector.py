@@ -1,5 +1,4 @@
 import requests
-import environment
 
 class exporter:
 
@@ -10,7 +9,7 @@ class exporter:
     
     
     headers = { 'accept': 'application/json', 
-    'cookie': environment.getCookie(),
+    'cookie': 'schoolname=\"_aGgtc2NodWxlLWthcmxzcnVoZQ==\";',
     'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'}
 
 
