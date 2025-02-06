@@ -16,11 +16,14 @@ class googleCalCon:
     creds = None
     service = None
     events = None
+    winterTimeOffset = 1
+    summerTimeOffset = 2
     
     def __init__(self):
         self.authenticate()
         self.service = build('calendar', 'v3', credentials=self.creds)
         self.events = self.getEntries()
+        #print(self.events)
     
     def authenticate(self):
         # The file token.pickle stores the user's access and refresh tokens, and is
@@ -63,10 +66,11 @@ class googleCalCon:
     
     
     def getEntries(self):
-        now = (datetime.utcnow()+timedelta(hours=2)).isoformat() + '+02:00'
+        now = (datetime.utcnow()+timedelta(days=-7)).isoformat() + '+02:00'
+        maxTime = (datetime.utcnow()+timedelta(days=7)).isoformat() + '+02:00'
         events_result = self.service.events().list(calendarId=environment.calendarID, timeMin= now,
-                                          maxResults=10, singleEvents=True,
-                                          orderBy='startTime').execute()
+                                          timeMax=maxTime, singleEvents=True,
+                                          orderBy='startTime', timeZone='UTC').execute()
         events = events_result.get('items', [])
 
         if not events:
@@ -80,32 +84,31 @@ class googleCalCon:
         return False
     
     def eql(self, eventOne, eventTwo):
-        params = ["summary", "description", "location"]
+        params = ["summary", "location"]
         for param in params:
             if eventOne[param] != eventTwo[param]:
                 return False
         
-        if not self.compareDatetime(eventOne['start']['dateTime'],eventTwo['start']['dateTime']):
+        if not self.sameDatetime(eventOne['start']['dateTime'],eventTwo['start']['dateTime']):
             return False
         
-        if not self.compareDatetime(eventOne['end']['dateTime'],eventTwo['end']['dateTime']):
+        if not self.sameDatetime(eventOne['end']['dateTime'],eventTwo['end']['dateTime']):
             return False
         
         return True
     
-    def compareDatetime(self,datetime, newTime):
+    def sameDatetime(self,datetime, newTime):
         #split time from date
         split = datetime.split('T')
+        #TODO: Winter/Summer Time
         newSplit = newTime.split('T')
         #compare dates
         if split[0] != newSplit[0]:
             return False
-        #split time and offset
-        time = split[1].split('-')
         #calc offset +1 (winter time?)
-        timeWithOffset = int(time[0].split(':')[0])+int(time[1].split(':')[0]) +1
-        if int(newSplit[1].split(':')[0]) != timeWithOffset:
-            print(timeWithOffset,newSplit[1].split(':')[0] )
+        timeWithOffset = int(split[1].split(':')[0]) + self.winterTimeOffset
+        if int(newSplit[1].split(':')[0]) != timeWithOffset and int(newSplit[1].split(':')[1]) != split[1].split(':')[1]:
+            #print(split, '|', str(timeWithOffset)+':'+split[1].split(':')[1], newSplit[1])
             return False
         return True
        
