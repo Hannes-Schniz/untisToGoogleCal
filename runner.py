@@ -18,13 +18,23 @@ def genTime(date, time):
     return dateTime
 
 for period in periods:
+    namePrefix = ""
+    color = '1'
+    if period['cellState'] == 'CANCEL':
+        namePrefix = "CANCELLED "
+        color = '11'
+    if period['cellState'] == 'ROOMSUBSTITUTION':
+        namePrefix = "CHANGED "
+        color = '5'
     startTime = genTime(period['date'], period['start'])
     endTime = genTime(period['date'], period['end'])
     googleCal.createEntry(name=period['name'],
+                          namePrefix=namePrefix,
                           location=period['location'], 
                           description=period['periodText'],
                           start=startTime,
-                          end=endTime
+                          end=endTime,
+                          background=color
                           )
     
     

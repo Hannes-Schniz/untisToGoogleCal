@@ -45,10 +45,10 @@ class googleCalCon:
                 pickle.dump(self.creds, token)
     
     #Dateformat : YYYY-MM-DDTHH:MM
-    def createEntry(self, name, location, description, start, end):
+    def createEntry(self, name, location, description, start, end, namePrefix, background):
         # Feature 2: Create a new calendar
         event = {
-            'summary': name,
+            'summary': namePrefix +name,
             'location': location,
             'description': description,
             'start': {
@@ -59,6 +59,7 @@ class googleCalCon:
                 'dateTime':  datetime.strptime(end,'%Y-%m-%d %H:%M').isoformat(),
                 'timeZone': 'Europe/Berlin',
             },
+            'colorId' : background
         }
         if self.eventExists(event, self.events):
             return
@@ -84,10 +85,13 @@ class googleCalCon:
         return False
     
     def eql(self, eventOne, eventTwo):
-        params = ["summary", "location"]
+        params = ["description","summary", "location"]
         for param in params:
-            if eventOne[param] != eventTwo[param]:
-                return False
+            try:
+                if eventOne[param] != eventTwo[param]:
+                    return False
+            except:
+                continue
         
         if not self.sameDatetime(eventOne['start']['dateTime'],eventTwo['start']['dateTime']):
             return False
