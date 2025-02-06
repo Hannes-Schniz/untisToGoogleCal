@@ -15,12 +15,14 @@ class googleCalCon:
     SCOPES = ['https://www.googleapis.com/auth/calendar']
     creds = None
     service = None
+    events = None
     
     def __init__(self):
         self.authenticate()
         self.service = build('calendar', 'v3', credentials=self.creds)
-        #print((datetime.utcnow() + timedelta(days=1)).isoformat())
+        self.events = self.getEntries()
         self.createEntry(0,0,0,0,0)
+        
     
     def authenticate(self):
         # The file token.pickle stores the user's access and refresh tokens, and is
@@ -44,7 +46,6 @@ class googleCalCon:
     #Dateformat : YYYY-MM-DDTHH:MM
     def createEntry(self, name, location, description, start, end):
         # Feature 2: Create a new calendar
-        
         event = {
             'summary': 'Python Meeting',
             'location': '800 Howard St., San Francisco, CA 94103',
@@ -58,7 +59,33 @@ class googleCalCon:
                 'timeZone': 'Europe/Berlin',
             },
         }
+        if self.eventExists(event, self.events):
+            return
         created_event = self.service.events().insert(calendarId=environment.calendarID, body=event).execute()
-        print(f"Created event: {environment.calendarID}")
+    
+    
+    def getEntries(self):
+        now = (datetime.utcnow()+timedelta(hours=2)).isoformat() + 'Z'
+        events_result = self.service.events().list(calendarId=environment.calendarID, timeMin= now,
+                                          maxResults=10, singleEvents=True,
+                                          orderBy='startTime').execute()
+        events = events_result.get('items', [])
+
+        if not events:
+            return []
+        return events
+    
+    def eventExists(self, event, eventList):
+        for extEvent in eventList:
+            if self.eql(extEvent,event):
+                return True
+        return False
+    
+    def eql(self, eventOne, eventTwo):
+        params = ["summary", "description", "location"]
+        for param in params:
+            if eventOne[param] != eventTwo[param]:
+                return False
+        return True
         
         
