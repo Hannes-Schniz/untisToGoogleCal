@@ -12,8 +12,8 @@ periods = []
 
 for i in range(int(conf['weeksAhead'])+1):
     currDate = (datetime.utcnow() + timedelta(days=i*7) ).strftime('%Y-%m-%d')
-    print(i,currDate)
-    periods += untis.getData(date=currDate, classID=conf['classID'])
+    #print(i,currDate)
+    periods += untis.getData(date=currDate, classID=conf['classID'], group=conf['group'])
 
 def genTime(date, time):
     dateTime = date[:4]+'-'+date[4:6]+'-'+date[6:8]+' '

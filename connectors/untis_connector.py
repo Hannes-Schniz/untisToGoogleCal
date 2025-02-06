@@ -17,7 +17,7 @@ class exporter:
         return elementMap
             
 
-    def getData(self, date, classID):
+    def getData(self, date, classID, group):
         
         options = "?elementType=1&elementId="+classID+"&date="+date+"&formatId=2"
         
@@ -25,12 +25,14 @@ class exporter:
 
         raw_data = response.json()['data']['result']['data']
     
-        periods = raw_data['elementPeriods'][self.classID]
+        periods = raw_data['elementPeriods'][classID]
         elements = raw_data['elements']
         
         elementMap = self.getElementMap(elements)
         parsedPeriods = []
         for period in periods:
+            if period['lessonText'] != group:
+                continue
             element_states = period['elements']
             #elements.state [REGULAR|SUBSTITUTED]
             #cellstate [CANCEL|STANDARD|ROOMSUBSTITUTION]
