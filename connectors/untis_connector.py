@@ -34,12 +34,6 @@ class exporter:
             if period['lessonText'] != group:
                 continue
             element_states = period['elements']
-            #elements.state [REGULAR|SUBSTITUTED]
-            #cellstate [CANCEL|STANDARD|ROOMSUBSTITUTION]
-            #print('---------------------------------------')
-            #print(elementMap[element_states[1]['id']]['name'])
-            #print(elementMap[element_states[2]['id']]['name'])
-            #print(str(period['date'])+":",period['startTime'], "->", period['endTime'])
             parsedPeriods.append({'name':elementMap[element_states[1]['id']]['name'], 
                                   'location': elementMap[element_states[2]['id']]['name'],
                                   'periodText': period['periodText'],
