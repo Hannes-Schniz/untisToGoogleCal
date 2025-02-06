@@ -1,13 +1,19 @@
 from connectors.untis_connector import exporter
 from connectors.google_cal_connector import googleCalCon
-from datetime import datetime
+from datetime import datetime, timedelta
+from configReader import configExtract
 
 untis = exporter()
 googleCal = googleCalCon()
 
-currDate = datetime.utcnow().strftime('%Y-%m-%d')
+conf = configExtract().conf
 
-periods = untis.getData(date=currDate)
+periods = []
+
+for i in range(int(conf['weeksAhead'])+1):
+    currDate = (datetime.utcnow() + timedelta(days=i*7) ).strftime('%Y-%m-%d')
+    print(i,currDate)
+    periods += untis.getData(date=currDate)
 
 def genTime(date, time):
     dateTime = date[:4]+'-'+date[4:6]+'-'+date[6:8]+' '
@@ -19,13 +25,13 @@ def genTime(date, time):
 
 for period in periods:
     namePrefix = ""
-    color = '1'
+    color = conf['color-scheme']['primary']
     if period['cellState'] == 'CANCEL':
         namePrefix = "CANCELLED "
-        color = '11'
+        color = conf['color-scheme']['cancelled']
     if period['cellState'] == 'ROOMSUBSTITUTION':
         namePrefix = "CHANGED "
-        color = '5'
+        color = conf['color-scheme']['changed']
     startTime = genTime(period['date'], period['start'])
     endTime = genTime(period['date'], period['end'])
     googleCal.createEntry(name=period['name'],
