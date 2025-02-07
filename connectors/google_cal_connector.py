@@ -8,7 +8,7 @@ from google.auth.transport.requests import Request
 from datetime import datetime, timedelta
 import pickle
 import os.path
-from secrets import environment
+import json
 
 class googleCalCon:
     
@@ -18,6 +18,7 @@ class googleCalCon:
     events = None
     winterTimeOffset = 1
     summerTimeOffset = 2
+    env = None
     
     def __init__(self):
         self.authenticate()
@@ -37,9 +38,15 @@ class googleCalCon:
             if self.creds and self.creds.expired and self.creds.refresh_token:
                 self.creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', self.SCOPES)
-                self.creds = flow.run_local_server(port=0)
+                try:
+                    flow = InstalledAppFlow.from_client_secrets_file(
+                        'credentials.json', self.SCOPES)
+                except:
+                    raise Exception("Cound not load Credentials.json")
+                try:
+                    self.creds = flow.run_local_server(port=0)
+                except Exception as e:
+                    raise Exception("Could not find Webbrowser", repr(e))
             # Save the credentials for the next run
             with open('token.pickle', 'wb') as token:
                 pickle.dump(self.creds, token)
@@ -63,13 +70,16 @@ class googleCalCon:
         }
         if self.eventExists(event, self.events):
             return
-        created_event = self.service.events().insert(calendarId=environment.calendarID, body=event).execute()
+        
+        with open("../environment.json") as env:
+            self.env = json.load(env)
+        created_event = self.service.events().insert(calendarId=self.env['calendarID'], body=event).execute()
     
     
     def getEntries(self):
         now = (datetime.utcnow()+timedelta(days=-7)).isoformat() + '+02:00'
         maxTime = (datetime.utcnow()+timedelta(days=7)).isoformat() + '+02:00'
-        events_result = self.service.events().list(calendarId=environment.calendarID, timeMin= now,
+        events_result = self.service.events().list(calendarId=self.env['calendarID'], timeMin= now,
                                           timeMax=maxTime, singleEvents=True,
                                           orderBy='startTime', timeZone='UTC').execute()
         events = events_result.get('items', [])
