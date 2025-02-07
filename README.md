@@ -106,4 +106,5 @@ A calendar entry is built as follows:
 
 
 ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+
 ** When you run the script for the first time, you need to login with Googles OAuth provider! So a Webbrowser is needed. Alternatively the script can be ran on your computer at first and the token can be transferred to your server!**
