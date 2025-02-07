@@ -1,17 +1,21 @@
 from connectors.untis_connector import exporter
 from connectors.google_cal_connector import googleCalCon
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from configReader import configExtract
+import sys
 
 untis = exporter()
 googleCal = googleCalCon()
 
-conf = configExtract().conf
+try:
+    conf = configExtract().conf
+except:
+    sys.exit()
 
 periods = []
 
 for i in range(int(conf['weeksAhead'])+1):
-    currDate = (datetime.utcnow() + timedelta(days=i*7) ).strftime('%Y-%m-%d')
+    currDate = (datetime.now(timezone.utc) + timedelta(days=i*7) ).strftime('%Y-%m-%d')
     #print(i,currDate)
     periods += untis.getData(date=currDate, classID=conf['classID'], group=conf['group'])
 
