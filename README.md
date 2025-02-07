@@ -103,3 +103,5 @@ A calendar entry is built as follows:
    pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
    ```
 7. Configure a cron job to run runner.py (Alternatively it can be ran manually)
+
+⚠️ ** When you run the script for the first time, you need to login with Googles OAuth provider! So a Webbrowser is needed. Alternatively the script can be ran on your computer at first and the token can be transferred to your server!** ⚠️
