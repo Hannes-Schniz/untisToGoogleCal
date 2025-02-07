@@ -2,7 +2,7 @@
 
 This tool transfers your untis calendar to a specified google calendar.
 
-It utilizes a publicly accessibale UNTI API to retrieve all important Information about lessons and budles them into calendar entries.
+It utilizes a publicly accessibale UNTIS API to retrieve all important Information about lessons and budles them into calendar entries.
 A calendar entry is built as follows:
 
 ```
