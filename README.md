@@ -12,9 +12,15 @@ A calendar entry is built as follows:
     'color': [purple:regular|yellow:changed|red:cancelled]
 ```
 
+**Advantages of this tool**
+- See all the most recent changes in your untis schedule mirrored in your calendar 🪞
+- Additive procedure (No entries are deleted, previous versions of the lessons are preserved) ➕
+- Configuration for The Information added to the calendar🖋️
+
+
 ---
 
-# Configuration
+# Configuration ⚙️
 
 - group: [A|B]
 - classID: ID found in the untis API as string
@@ -37,7 +43,7 @@ A calendar entry is built as follows:
   "weeksAhead": 1
 ```
 
-**color codes**
+**color codes** 🖍️
 
 | colorID | Name                  | hexCode |
 | ------- | --------------------- | ------- |
@@ -56,14 +62,14 @@ A calendar entry is built as follows:
 
 ---
 
-# Endpoints
+# Endpoints 🔌
 
 - https://erato.webuntis.com/WebUntis/api/public/timetable/weekly/data
 - https://www.googleapis.com/auth/calendar
 
 ---
 
-# Modules
+# Modules 🧩
 
 - google_cal_connector.py
   Handles all communication with the google calendar API
@@ -76,7 +82,7 @@ A calendar entry is built as follows:
 
 ---
 
-# Setup
+# Setup 🛠️
 
 1. Clone this repository
 2. Register a google project
