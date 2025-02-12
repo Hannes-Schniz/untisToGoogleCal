@@ -20,14 +20,15 @@ class exporter:
 
     def getData(self, date, classID, group):
         
-        if re.match(date, "[0-9]^8") == None or len(date) != 8:
-            raise Exception("Incorrect date format in Untis Api call")
+        #if re.match(date, "[0-9]^8") == None or len(date) != 8:
+        #    raise Exception("Incorrect date format in Untis Api call")
         
         options = "?elementType=1&elementId="+classID+"&date="+date+"&formatId=2"
         
         try:
             response = requests.get(self.url + options, headers=self.headers)
             raw_data = response.json()['data']['result']['data']
+            #print(raw_data)
         except:
             raise Exception("Failed to retrieve Untis data correctly")
     
@@ -37,8 +38,9 @@ class exporter:
         elementMap = self.getElementMap(elements)
         
         parsedPeriods = []
+        #print(parsedPeriods)
         for period in periods:
-            if period['lessonText'] != group:
+            if period['lessonText'] != group and period['lessonText'] != "":
                 continue
             element_states = period['elements']
             parsedPeriods.append({'name':elementMap[element_states[1]['id']]['name'], 

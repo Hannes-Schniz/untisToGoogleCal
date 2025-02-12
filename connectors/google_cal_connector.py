@@ -23,6 +23,8 @@ class googleCalCon:
     def __init__(self):
         self.authenticate()
         self.service = build('calendar', 'v3', credentials=self.creds)
+        with open("environment.json") as env:
+            self.env = json.load(env)
         self.events = self.getEntries()
         #print(self.events)
     
@@ -68,12 +70,14 @@ class googleCalCon:
             },
             'colorId' : background
         }
+        #print(event)
         if self.eventExists(event, self.events):
+            #print("tests")
             return
         
-        with open("../environment.json") as env:
-            self.env = json.load(env)
+        
         created_event = self.service.events().insert(calendarId=self.env['calendarID'], body=event).execute()
+        #print(created_event)
     
     
     def getEntries(self):

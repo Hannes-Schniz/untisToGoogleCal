@@ -27,6 +27,8 @@ def genTime(date, time):
     dateTime += str(time)[:2] + ':' + str(time)[2:4]
     return dateTime
 
+#print(periods)
+
 for period in periods:
     namePrefix = ""
     color = conf['color-scheme']['primary']
