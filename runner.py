@@ -1,16 +1,18 @@
-from connectors.untis_connector import exporter
-from connectors.google_cal_connector import googleCalCon
+from untis_connector import exporter
+from google_cal_connector import googleCalCon
 from datetime import datetime, timedelta, timezone
 from configReader import configExtract
 import sys
 
 untis = exporter()
-googleCal = googleCalCon()
+
 
 try:
     conf = configExtract().conf
 except:
     sys.exit()
+    
+googleCal = googleCalCon(conf['weeksAhead'])
 
 periods = []
 
