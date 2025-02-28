@@ -3,14 +3,11 @@
 #add credentials.json
 #pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 from datetime import datetime, timedelta
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-import pickle
-import os.path
 import json
+import pytz
 
 class googleCalCon:
     
@@ -21,42 +18,20 @@ class googleCalCon:
     winterTimeOffset = 1
     summerTimeOffset = 2
     env = None
+    target_timezone = pytz.timezone('Europe/Berlin')
     
-    def __init__(self):
+    def __init__(self, weeks):
         service = self.authenticate()
         self.service = service
         with open("environment.json") as env:
             self.env = json.load(env)
-        self.events = self.getEntries()
+        self.events = self.getEntries(weeks)
         #print(self.events)
     
     def authenticate(self):
-        # The file token.pickle stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
-        #if os.path.exists('token.pickle'):
-        #    with open('token.pickle', 'rb') as token:
-        #        self.creds = pickle.load(token)
-        # If there are no (valid) credentials available, let the user log in.
-        #if not self.creds or not self.creds.valid:
-        #    if self.creds and self.creds.expired and self.creds.refresh_token:
-        #        self.creds.refresh(Request())
-        #    else:
-        #        try:
-        #            flow = InstalledAppFlow.from_client_secrets_file(
-        #                'credentials.json', self.SCOPES)
-        #        except:
-        #            raise Exception("Cound not load Credentials.json")
-        #        try:
-        #            self.creds = flow.run_local_server(port=0)
-        #        except Exception as e:
-        #            raise Exception("Could not find Webbrowser", repr(e))
-        #    # Save the credentials for the next run
-        #    with open('token.pickle', 'wb') as token:
-        #        pickle.dump(self.creds, token)
         SCOPES = ['https://www.googleapis.com/auth/calendar']
 
-        credentials = service_account.Credentials.from_service_account_file('../credentials.json', scopes=SCOPES)
+        credentials = service_account.Credentials.from_service_account_file('credentials.json', scopes=SCOPES)
 
         return build('calendar', 'v3', credentials=credentials)
     
@@ -87,12 +62,20 @@ class googleCalCon:
         #print(created_event)
     
     
-    def getEntries(self):
-        now = (datetime.utcnow()+timedelta(days=-7)).isoformat() + '+02:00'
-        maxTime = (datetime.utcnow()+timedelta(days=7)).isoformat() + '+02:00'
-        events_result = self.service.events().list(calendarId=self.env['calendarID'], timeMin= now,
-                                          timeMax=maxTime, singleEvents=True,
-                                          orderBy='startTime', timeZone='UTC').execute()
+    def getEntries(self, weeks):
+        
+        utc_now = datetime.utcnow()
+        target_now = utc_now.replace(tzinfo=pytz.utc).astimezone(self.target_timezone)
+        minTime = (target_now + timedelta(days=-7*weeks)).isoformat()
+        maxTime = (target_now + timedelta(days=7*weeks)).isoformat()
+        events_result = self.service.events().list(
+            calendarId=self.env['calendarID'],
+            timeMin=minTime,
+            timeMax=maxTime,
+            singleEvents=True,
+            orderBy='startTime',
+            timeZone=str(self.target_timezone)  # Important: Use the timezone string
+        ).execute()
         print(events_result)
         events = events_result.get('items', [])
 
