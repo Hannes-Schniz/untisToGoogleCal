@@ -55,6 +55,5 @@ class exporter:
                                   'date':date,
                                   'start':start,
                                   'end':end,
-                                  'type': classType})
-        print(periods)      
+                                  'type': classType})    
         return periods

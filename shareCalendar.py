@@ -30,7 +30,7 @@ def share_calendar_interactive():
                 'type': 'user',
                 'value': shared_email,
             },
-            'role': 'reader'  # or 'writer' for edit permissions
+            'role': 'writer'  # 'reader' or 'writer' for edit permissions
         }
 
         # Add access rule

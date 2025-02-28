@@ -52,14 +52,11 @@ class googleCalCon:
             },
             'colorId' : background
         }
-        #print(event)
         if self.eventExists(event, self.events):
-            #print("tests")
             return
         
         
         created_event = self.service.events().insert(calendarId=self.env['calendarID'], body=event).execute()
-        #print(created_event)
     
     
     def getEntries(self, weeks):

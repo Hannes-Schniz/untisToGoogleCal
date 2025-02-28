@@ -22,8 +22,6 @@ for i in range(int(conf['weeksAhead'])+1):
     start = dt - timedelta(days=dt.weekday())
     end = (start + timedelta(days=5)).strftime('%Y-%m-%d')
     start = start.strftime('%Y-%m-%d')
-    print(start,end)
-    #print(i,currDate)
     periods += untis.getData(start=start, end=end, classID=conf['classID'], group=conf['group'])
 
 for period in periods:
@@ -35,16 +33,19 @@ for period in periods:
     if period['cellState'] == 'ROOMSUBSTITUTION':
         namePrefix = "CHANGED "
         color = conf['color-scheme']['changed']
+    if period['type'] == 'EXAM':
+        namePrefix = "EXAM "
+        color = conf['color-scheme']['exam']
     startTime = period['start']
     endTime = period['end']
-    #googleCal.createEntry(name=period['name'],
-    #                      namePrefix=namePrefix,
-    #                      location=period['location'], 
-    #                      description=period['periodText'],
-    #                      start=startTime,
-    #                      end=endTime,
-    #                      background=color
-    #                      )
+    googleCal.createEntry(name=period['name'],
+                          namePrefix=namePrefix,
+                          location=period['location'], 
+                          description=period['periodText'],
+                          start=startTime,
+                          end=endTime,
+                          background=color
+                          )
     
     
 
