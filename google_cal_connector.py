@@ -43,11 +43,11 @@ class googleCalCon:
             'location': location,
             'description': description,
             'start': {
-                'dateTime':  datetime.strptime(start,'%Y-%m-%d %H:%M').isoformat(),
+                'dateTime':  datetime.strptime(start,'%Y-%m-%dT%H:%M').isoformat(),
                 'timeZone':  str(self.target_timezone),
             },
             'end': {
-                'dateTime':  datetime.strptime(end,'%Y-%m-%d %H:%M').isoformat(),
+                'dateTime':  datetime.strptime(end,'%Y-%m-%dT%H:%M').isoformat(),
                 'timeZone':  str(self.target_timezone),
             },
             'colorId' : background

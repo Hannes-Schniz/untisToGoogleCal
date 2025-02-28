@@ -1,15 +1,15 @@
 import requests
 
 class exporter:
-
-    url = "https://erato.webuntis.com/WebUntis/api/public/timetable/weekly/data"
     
-    #urlRest = "https://erato.webuntis.com/WebUntis/api/rest/view/v1/timetable/entries"
+    urlRest = "https://erato.webuntis.com/WebUntis/api/rest/view/v1/timetable/entries"
     
-    headers = { 'accept': 'application/json', 
-    'cookie': 'schoolname="_aGgtc2NodWxlLWthcmxzcnVoZQ==";',
-    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'}
-
+    headers = {
+    'accept': 'application/json, text/plain, */*',
+    'accept-language': 'de-DE,de;q=0.9,en-DE;q=0.8,en;q=0.7,en-US;q=0.6',
+    'anonymous-school': 'HH-Schule-Karlsruhe',
+    'cookie': 'schoolname="_aGgtc2NodWxlLWthcmxzcnVoZQ=="; Tenant-Id="4240600";'
+}
 
     def getElementMap(self, elements):
         elementMap = {}
@@ -19,39 +19,42 @@ class exporter:
         return elementMap
             
 
-    def getData(self, date, classID, group):
+    def getData(self, start, end, classID, group):
         
-        #if re.match(date, "[0-9]^8") == None or len(date) != 8:
-        #    raise Exception("Incorrect date format in Untis Api call")
-        
-        options = "?elementType=1&elementId="+classID+"&date="+date+"&formatId=2"
-        
-        #optionsRest = "?start="+date+"&end=2025-03-29&format=2&resourceType=CLASS&resources=3306&periodTypes=&timetableType=STANDARD"
+        optionsRest = "?start="+start+"&end="+end+"&format=2&resourceType=CLASS&resources="+classID+"&periodTypes=&timetableType=STANDARD"
         
         try:
-            response = requests.get(self.url + options, headers=self.headers)
-            raw_data = response.json()['data']['result']['data']
-            #print(raw_data)
+            response = requests.get(self.urlRest + optionsRest, headers=self.headers)
+            raw_data = response.json()
         except:
             raise Exception("Failed to retrieve Untis data correctly")
-    
-        periods = raw_data['elementPeriods'][classID]
-        elements = raw_data['elements']
         
-        elementMap = self.getElementMap(elements)
         
-        parsedPeriods = []
-        #print(parsedPeriods)
-        for period in periods:
-            if period['lessonText'] != group and period['lessonText'] != "":
-                continue
-            element_states = period['elements']
-            parsedPeriods.append({'name':elementMap[element_states[1]['id']]['name'], 
-                                  'location': elementMap[element_states[2]['id']]['name'],
-                                  'periodText': period['periodText'],
-                                  'cellState': period['cellState'],
-                                  'date':str(period['date']),
-                                  'start':period['startTime'],
-                                  'end':period['endTime']})
-        print(parsedPeriods)
-        return parsedPeriods
+        periods = []
+        
+        for day in raw_data['days']:
+            date = day['date']
+            status = day['status']
+            for entry in day['gridEntries']:
+                classType = entry['type']
+                
+                start = entry['duration']['start']
+                end = entry['duration']['end']
+                if not entry['position1']:
+                    continue
+                shortName = entry['position1'][0]['current']['shortName']
+                longName = entry['position1'][0]['current']['longName']
+                if not entry['position2']:
+                    continue
+                room = entry['position2'][0]['current']['displayName']
+                
+                periods.append({'name':shortName, 
+                                  'location': room,
+                                  'periodText': longName,
+                                  'cellState': status,
+                                  'date':date,
+                                  'start':start,
+                                  'end':end,
+                                  'type': classType})
+        print(periods)      
+        return periods

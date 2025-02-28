@@ -18,18 +18,13 @@ periods = []
 
 for i in range(int(conf['weeksAhead'])+1):
     currDate = (datetime.now(timezone.utc) + timedelta(days=i*7) ).strftime('%Y-%m-%d')
+    dt = datetime.strptime(currDate, '%Y-%m-%d')
+    start = dt - timedelta(days=dt.weekday())
+    end = (start + timedelta(days=5)).strftime('%Y-%m-%d')
+    start = start.strftime('%Y-%m-%d')
+    print(start,end)
     #print(i,currDate)
-    periods += untis.getData(date=currDate, classID=conf['classID'], group=conf['group'])
-
-def genTime(date, time):
-    dateTime = date[:4]+'-'+date[4:6]+'-'+date[6:8]+' '
-    if time < 1000:
-        dateTime += '0' + str(time)[:1] + ':' + str(time)[1:3]
-        return dateTime
-    dateTime += str(time)[:2] + ':' + str(time)[2:4]
-    return dateTime
-
-#print(periods)
+    periods += untis.getData(start=start, end=end, classID=conf['classID'], group=conf['group'])
 
 for period in periods:
     namePrefix = ""
@@ -40,16 +35,16 @@ for period in periods:
     if period['cellState'] == 'ROOMSUBSTITUTION':
         namePrefix = "CHANGED "
         color = conf['color-scheme']['changed']
-    startTime = genTime(period['date'], period['start'])
-    endTime = genTime(period['date'], period['end'])
-    googleCal.createEntry(name=period['name'],
-                          namePrefix=namePrefix,
-                          location=period['location'], 
-                          description=period['periodText'],
-                          start=startTime,
-                          end=endTime,
-                          background=color
-                          )
+    startTime = period['start']
+    endTime = period['end']
+    #googleCal.createEntry(name=period['name'],
+    #                      namePrefix=namePrefix,
+    #                      location=period['location'], 
+    #                      description=period['periodText'],
+    #                      start=startTime,
+    #                      end=endTime,
+    #                      background=color
+    #                      )
     
     
 
