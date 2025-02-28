@@ -13,14 +13,14 @@ A calendar entry is built as follows:
 ```
 
 **Advantages of this tool**
-- 🪞 See all the most recent changes in your untis schedule mirrored in your calendar 
-- ➕ Additive procedure (No entries are deleted, previous versions of the lessons are preserved) 
-- 🖋️ Configuration for The Information added to the calendar
 
+- 🪞 See all the most recent changes in your untis schedule mirrored in your calendar
+- ➕ Additive procedure (No entries are deleted, previous versions of the lessons are preserved)
+- 🖋️ Configuration for The Information added to the calendar
 
 ---
 
-# ⚙️ Configuration 
+# ⚙️ Configuration
 
 - group: [A|B]
 - classID: ID found in the untis API as string
@@ -43,7 +43,7 @@ A calendar entry is built as follows:
   "weeksAhead": 1
 ```
 
-🖍️ **color codes** 
+🖍️ **color codes**
 
 | colorID | Name                  | hexCode |
 | ------- | --------------------- | ------- |
@@ -62,14 +62,14 @@ A calendar entry is built as follows:
 
 ---
 
-# 🔌 Endpoints 
+# 🔌 Endpoints
 
 - https://erato.webuntis.com/WebUntis/api/public/timetable/weekly/data
 - https://www.googleapis.com/auth/calendar
 
 ---
 
-# 🧩 Modules 
+# 🧩 Modules
 
 - google_cal_connector.py
   Handles all communication with the google calendar API
@@ -82,29 +82,101 @@ A calendar entry is built as follows:
 
 ---
 
-# 🛠️ Setup 
+# 🛠️ Setup
 
-1. Clone this repository
-2. Register a google project
-3. Enable the google calendar api
-   https://developers.google.com/calendar/api/quickstart/python?hl=de
-4. Download your secret and add it to credentials.json in the rood directory of the project
-5. Create a environment.json file containing your calendar ID like:
+## 📅 Google Calendar Automation Setup ☁️
 
-   ```
-   {
-       "calendarID":"<calendar id>"
-   }
+This guide will walk you through setting up a Google Cloud project, creating a service account, and using the provided Python scripts (`showCalendar.py` and `shareCalendar.py`) to manage your Google Calendar.
 
-   ```
+### 🛠️ Prerequisites
 
-6. Install all python libraries needed for the google API
-   ```
-   pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
-   ```
-7. Configure a cron job to run runner.py (Alternatively it can be ran manually)
+- A Google account 📧.
+- Python 3.6 or later installed 🐍.
+- `pip` (Python package installer) 📦.
 
+### ☁️ Setup Google Cloud Project
 
-⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+1.  **Go to the Google Cloud Console:**
+    - Open your web browser and navigate to [console.cloud.google.com](https://console.cloud.google.com/) 🌐.
+2.  **Create a New Project:**
+    - Click on the project selection dropdown at the top of the page 🔽.
+    - Click "New Project" ➕.
+    - Enter a project name and click "Create" ✅.
+3.  **Enable the Google Calendar API:**
+    - In the Cloud Console, navigate to "APIs & Services" > "Dashboard" 📊.
+    - Click "Enable APIs and Services" ➕.
+    - Search for "Google Calendar API" and click on it 🔍.
+    - Click "Enable" 👍.
 
-**When you run the script for the first time, you need to login with Googles OAuth provider! So a Webbrowser is needed. Alternatively the script can be ran on your computer at first and the token can be transferred to your server!**
+### 🔑 Create a Service Account
+
+1.  **Navigate to Service Accounts:**
+    - In the Cloud Console, navigate to "APIs & Services" > "Credentials" 🔐.
+    - Click "Create Credentials" and select "Service account" 👤.
+2.  **Service Account Details:**
+    - Enter a service account name 📝.
+    - Click "Create and Continue" 👉.
+    - (Optional) Assign roles. For basic calendar access, you can use "Project" > "Viewer" or any more specific calendar role 🛡️.
+    - Click "Continue" and then "Done" 🎉.
+3.  **Create a JSON Key:**
+    - Click on the newly created service account 🖱️.
+    - Go to the "Keys" tab 🔑.
+    - Click "Add Key" and select "Create new key" ➕.
+    - Choose "JSON" as the key type and click "Create" 💾.
+    - A JSON file will be downloaded. **Store this file securely.** Rename it to `credentials.json` and place it in the same directory as your Python scripts 📂.
+
+### 📦 Setup Python Virtual Environment and Install Dependencies
+
+1.  **Create a Virtual Environment:**
+    - Open your terminal or command prompt 💻.
+    - Navigate to the directory containing your scripts 🧭.
+    - Run the following command to create a virtual environment:
+      - On Windows: `python -m venv venv`
+      - On macOS/Linux: `python3 -m venv venv`
+2.  **Activate the Virtual Environment:**
+
+    - On Windows: `venv\Scripts\activate`
+    - On macOS/Linux: `source venv/bin/activate`
+
+3.  **Install Dependencies:**
+    - Run the following command to install the required Python libraries: `pip install -r requirements.txt`
+
+### 🚀 Using the Scripts
+
+#### `showCalendar.py` 🔍
+
+This script finds or creates a calendar called "school" and outputs its URL.
+
+1.  **Place the Script:**
+    - Save `showCalendar.py` and `credentials.json` in the same directory 📂.
+2.  **Run the Script:**
+    - Open your terminal or command prompt 💻.
+    - Ensure your virtual environment is activated.
+    - Navigate to the directory containing the script 🧭.
+    - Run the script: `python showCalendar.py` ▶️.
+3.  **Output:**
+    - The script will output the calendar's ID and URL, indicating whether it was found or created 📋.
+
+#### `shareCalendar.py` 🤝
+
+This script shares a specific calendar with a user-provided email address. It also generates a json file with the calendar ID.
+
+1.  **Place the Script:**
+    - Save `shareCalendar.py` and `credentials.json` in the same directory 📂.
+2.  **Run the Script:**
+    - Open your terminal or command prompt 💻.
+    - Ensure your virtual environment is activated.
+    - Navigate to the directory containing the script 🧭.
+    - Run the script: `python shareCalendar.py` ▶️.
+3.  **Interactive Input:**
+    - The script will prompt you to enter the email address to share the calendar with 📧.
+    - The script will prompt you to enter the calendar ID 🆔.
+4.  **Output:**
+    - The script will output a confirmation message indicating that the calendar has been shared ✅.
+    - A `environment.json` file will be generated in the same directory, containing the calendar ID 📄.
+
+### 🔒 Security Notes
+
+- **Protect your `credentials.json` file:** This file contains sensitive information. Do not share it or commit it to version control systems 🛡️.
+- **Restrict service account permissions:** Grant only the necessary permissions to the service account 🔑.
+- **Regularly review and rotate service account keys:** This helps minimize the impact of compromised keys 🔄.
