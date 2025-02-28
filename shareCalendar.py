@@ -40,7 +40,7 @@ def share_calendar_interactive():
         print(f'Access rule ID: {created_rule["id"]}')
 
         # Generate JSON file with calendar ID
-        calendar_data = {"calendarId": calendar_id}
+        calendar_data = {"calendarID": calendar_id}
         with open("environment.json", "w") as f:
             json.dump(calendar_data, f, indent=4)
 
