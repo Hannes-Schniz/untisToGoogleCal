@@ -4,6 +4,8 @@ class exporter:
 
     url = "https://erato.webuntis.com/WebUntis/api/public/timetable/weekly/data"
     
+    #urlRest = "https://erato.webuntis.com/WebUntis/api/rest/view/v1/timetable/entries"
+    
     headers = { 'accept': 'application/json', 
     'cookie': 'schoolname="_aGgtc2NodWxlLWthcmxzcnVoZQ==";',
     'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'}
@@ -23,6 +25,8 @@ class exporter:
         #    raise Exception("Incorrect date format in Untis Api call")
         
         options = "?elementType=1&elementId="+classID+"&date="+date+"&formatId=2"
+        
+        #optionsRest = "?start="+date+"&end=2025-03-29&format=2&resourceType=CLASS&resources=3306&periodTypes=&timetableType=STANDARD"
         
         try:
             response = requests.get(self.url + options, headers=self.headers)
@@ -49,4 +53,5 @@ class exporter:
                                   'date':str(period['date']),
                                   'start':period['startTime'],
                                   'end':period['endTime']})
+        print(parsedPeriods)
         return parsedPeriods
