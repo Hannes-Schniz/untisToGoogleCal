@@ -44,11 +44,11 @@ class googleCalCon:
             'description': description,
             'start': {
                 'dateTime':  datetime.strptime(start,'%Y-%m-%d %H:%M').isoformat(),
-                'timeZone': 'Europe/Berlin',
+                'timeZone':  str(self.target_timezone),
             },
             'end': {
                 'dateTime':  datetime.strptime(end,'%Y-%m-%d %H:%M').isoformat(),
-                'timeZone': 'Europe/Berlin',
+                'timeZone':  str(self.target_timezone),
             },
             'colorId' : background
         }
@@ -76,18 +76,71 @@ class googleCalCon:
             orderBy='startTime',
             timeZone=str(self.target_timezone)  # Important: Use the timezone string
         ).execute()
-        print(events_result)
+        #print(events_result)
         events = events_result.get('items', [])
-
+        #print(events)
+        
         if not events:
             return []
         return events
     
     def eventExists(self, event, eventList):
+        #print(event['summary'])
+        summary = event['summary']
+        location = event['location']
+        description = event['description']
+        
+        start = event['start'].get('dateTime')
+        end = event['end'].get('dateTime')
+        #print(str(end)+"test", str(start))
+        new_start = self.normalize_datetime_string(start)
+        new_end = self.normalize_datetime_string(end)
+       
+        #start = event['start']['dateTime']
+        #end = event['end']['dateTime']
+        for existing_event in eventList:
+            #ex_start = self.normalize_datetime_string(existing_event['start'].get('dateTime'))
+            #ex_end = self.normalize_datetime_string(existing_event['end'].get('dateTime'))
+            ex_start = existing_event['start'].get('dateTime')
+            ex_end = existing_event['end'].get('dateTime')
+            # Compare event properties
+            if (
+                existing_event.get('summary') == summary
+                and ex_start == new_start
+                and ex_end == new_end
+            ):
+                #print(existing_event, event)
+                return True  # Event already exists
+
+        return False  # Event does not exist
+        
         for extEvent in eventList:
             if self.eql(extEvent,event):
                 return True
         return False
+    
+    def normalize_datetime_string(self, datetime_string):
+        try:
+            # Parse the datetime string
+            dt = datetime.fromisoformat(datetime_string)
+
+            # Handle naive datetimes (no timezone info)
+            if dt.tzinfo is None:
+                if self.target_timezone:
+                    dt = self.target_timezone.localize(dt)
+                else:
+                    dt = pytz.utc.localize(dt) #assume UTC if no timezone and no target timezone
+
+            # Convert to the target timezone if specified
+            if self.target_timezone:
+                dt = dt.astimezone(self.target_timezone)
+
+            # Format to ISO with offset
+            normalized_string = dt.isoformat()
+            return normalized_string
+
+        except ValueError:
+            return None  # Return None if the string cannot be parsed
     
     def eql(self, eventOne, eventTwo):
         params = ["description","summary", "location"]
