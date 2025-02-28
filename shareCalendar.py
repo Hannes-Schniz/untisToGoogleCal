@@ -5,6 +5,8 @@ from googleapiclient.discovery import build
 # Path to the credentials.json file
 SERVICE_ACCOUNT_FILE = './credentials.json'
 
+ENVIRONMENT_FILE = './environment.json'
+
 # Required permissions
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
@@ -15,7 +17,25 @@ def share_calendar_interactive():
         shared_email = input("Enter the email address to share the calendar with: ")
 
         # Get calendar ID from user
-        calendar_id = input("Enter the calendar ID to share: ")
+        
+        configured = input("Do you wish to use the configured Calendar to proceed (yes/no): ") == "yes"
+        
+        if configured:
+            try:
+                with open("environment.json", "r") as f:
+                    calendar_id = json.load(f)
+                    calendar_id = calendar_id['calendarID']
+            except:
+                print("No calendar configured")
+                calendar_id = input("Enter the calendar ID to share: ")
+        else:
+            calendar_id = input("Enter the calendar ID to share: ")
+        
+        role = input("Enter a preffered role (reader/writer): ")
+        
+        while role != "reader" and role != "writer":
+            print("Wrong input please enter a correct role to proceed!")
+            role = input("Enter a preffered role (reader/writer): ")
 
         # Authorization with the credentials.json file
         creds = service_account.Credentials.from_service_account_file(
@@ -30,7 +50,7 @@ def share_calendar_interactive():
                 'type': 'user',
                 'value': shared_email,
             },
-            'role': 'writer'  # 'reader' or 'writer' for edit permissions
+            'role': role  # 'reader' or 'writer' for edit permissions
         }
 
         # Add access rule
@@ -42,7 +62,7 @@ def share_calendar_interactive():
         # Generate JSON file with calendar ID
         calendar_data = {"calendarID": calendar_id}
         with open("environment.json", "w") as f:
-            json.dump(calendar_data, f, indent=4)
+            json.dump(calendar_data, f, indent=2)
 
         print(f'Calendar ID saved to calendar_id.json')
 
