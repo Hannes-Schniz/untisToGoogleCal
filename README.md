@@ -38,7 +38,8 @@ A calendar entry is built as follows:
   "color-scheme": {
     "primary": "1",
     "cancelled": "11",
-    "changed": "5"
+    "changed": "5",
+    "exams": "10"
   },
   "weeksAhead": 1
 ```
