@@ -20,7 +20,7 @@ def delete_all_calendar_events(calendar_id):
         service = build('calendar', 'v3', credentials=creds)
 
         # Get the list of events
-        events_result = service.events().list(calendarId=calendar_id).execute()
+        events_result = service.events().list(calendarId=calendar_id, maxResults=9999).execute()
         print(events_result)
         events = events_result.get('items', [])
 

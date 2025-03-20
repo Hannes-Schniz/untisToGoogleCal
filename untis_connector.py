@@ -34,8 +34,8 @@ class exporter:
         
         for day in raw_data['days']:
             date = day['date']
-            status = day['status']
             for entry in day['gridEntries']:
+                status = entry['status']
                 classType = entry['type']
                 
                 start = entry['duration']['start']

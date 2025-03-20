@@ -27,21 +27,28 @@ for i in range(int(conf['weeksAhead'])+1):
 for period in periods:
     namePrefix = ""
     color = conf['color-scheme']['primary']
-    if period['cellState'] == 'CANCEL':
+    if period['cellState'] == 'CANCELLED':
         namePrefix = "CANCELLED "
         color = conf['color-scheme']['cancelled']
-    if period['cellState'] == 'ROOMSUBSTITUTION':
+    if period['cellState'] == 'CHANGED':
         namePrefix = "CHANGED "
+        color = conf['color-scheme']['changed']
+    if period['cellState'] == 'ADDITIONAL':
+        namePrefix = "ADDITIONAL "
         color = conf['color-scheme']['changed']
     if period['type'] == 'EXAM':
         namePrefix = "EXAM "
         color = conf['color-scheme']['exam']
     startTime = period['start']
     endTime = period['end']
+    if period['name'] == None:
+        continue
+    
+    #print(period['cellState'])
     googleCal.createEntry(name=period['name'],
                           namePrefix=namePrefix,
                           location=period['location'], 
-                          description=period['periodText'],
+                          description=period['periodText'] + "\n" + period['cellState'],
                           start=startTime,
                           end=endTime,
                           background=color
