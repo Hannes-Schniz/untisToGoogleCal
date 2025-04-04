@@ -21,7 +21,6 @@ def delete_all_calendar_events(calendar_id):
 
         # Get the list of events
         events_result = service.events().list(calendarId=calendar_id, maxResults=9999).execute()
-        print(events_result)
         events = events_result.get('items', [])
 
         if not events:

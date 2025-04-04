@@ -8,6 +8,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import json
 import pytz
+import telegramBot
 
 class googleCalCon:
     
@@ -55,8 +56,13 @@ class googleCalCon:
         if self.eventExists(event, self.events):
             return
         
-        
+        self.sendMessage(namePrefix, name, location, description, start, end)
         created_event = self.service.events().insert(calendarId=self.env['calendarID'], body=event).execute()
+        
+    def sendMessage(self,state, summary, location, description, start, end):
+        message = f"{summary}\nRaum: {location}\nDatum: {start.split('T')[0]}\nZeit: {start.split('T')[1]}-{end.split('T')[1]}\nBeschreibung: {description}"
+        if state.strip() in ['CHANGED','ADDITIONAL','CANCELLED', 'EXAM']:
+            telegramBot.sendMessage(message=message)
     
     
     def getEntries(self, weeks):
