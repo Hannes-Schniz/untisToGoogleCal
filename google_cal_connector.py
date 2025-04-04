@@ -60,7 +60,7 @@ class googleCalCon:
         created_event = self.service.events().insert(calendarId=self.env['calendarID'], body=event).execute()
         
     def sendMessage(self,state, summary, location, description, start, end):
-        message = f"{summary}\nRaum: {location}\nDatum: {start.split('T')[0]}\nZeit: {start.split('T')[1]}-{end.split('T')[1]}\nBeschreibung: {description}"
+        message = telegramBot.createText(summary, state, location, description, start.split('T')[0], start.split('T')[1], end.split('T')[1])
         if state.strip() in ['CHANGED','ADDITIONAL','CANCELLED', 'EXAM']:
             telegramBot.sendMessage(message=message)
     
