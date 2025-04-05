@@ -12,7 +12,7 @@ def sendMessage(message):
     requests.post(url=url, params=params)
     
 def createText(summary, location, description, date, start, end ):
-    date = f"{date.split("-")[2]}.{date.split("-")[1]}.{date.split("-")[0]}"
+    date = f"{date.split('-')[2]}.{date.split('-')[1]}.{date.split('-')[0]}"
     return f"<b>{summary}</b>\n<b>Raum:</b> {location}\n<b>Stunde</b>: {date} {start}-{end}\n<b>Beschreibung:</b> {description}"
     
 def shareCalendar():
