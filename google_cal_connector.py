@@ -71,7 +71,7 @@ class googleCalCon:
         
         utc_now = datetime.utcnow()
         target_now = utc_now.replace(tzinfo=pytz.utc).astimezone(self.target_timezone)
-        minTime = (target_now + timedelta(days=-7*weeks)).isoformat()
+        minTime = (target_now).isoformat()
         maxTime = (target_now + timedelta(days=7*weeks)).isoformat()
         events_result = self.service.events().list(
             calendarId=self.env['calendarID'],
