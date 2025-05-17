@@ -182,4 +182,4 @@ Syncs your Untis timetable to Google Calendar and sends Telegram notifications f
 
 ## 📄 License
 
-MIT or your preferred license here.
+[MIT License](https://opensource.org/licenses/MIT)
