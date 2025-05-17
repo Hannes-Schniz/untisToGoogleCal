@@ -1,4 +1,7 @@
-# Untis to Google Calendar Transfer Tool
+# ClassCompass
+
+![2025-05-17_19-54](https://github.com/user-attachments/assets/e3673d16-a7b0-4993-bd64-000b31d6c1d6)
+
 
 This tool transfers your Untis timetable to a Google Calendar and can **notify you of important changes via Telegram**.
 
