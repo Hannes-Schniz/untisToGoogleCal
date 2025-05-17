@@ -1,10 +1,11 @@
 import requests
-import env
-import shareCalendarBot
 import time
+from configReader import configExtract
 
-TOKEN = env.telegramToken
-chat_id = env.telegramChat
+
+configExtract("environment.json")
+TOKEN = configExtract.conf["telegramToken"]
+chat_id = configExtract.conf["telegramChat"]
 
 def sendMessage(message):
     params = {"chat_id":chat_id,"text": message, "parse_mode": "HTML"}
