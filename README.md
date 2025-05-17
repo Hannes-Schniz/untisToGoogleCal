@@ -40,19 +40,19 @@ Edit your configuration in [`config.json`](config.json):
 
 ### 🖍️ Color Codes
 
-| colorID | Name      | hexCode   | Example                |
-| ------- | --------- | --------- | ---------------------- |
-| 1       | Lavender  | #A4BDFC   | ![#A4BDFC](https://via.placeholder.com/20/A4BDFC/000000?text=+) |
-| 2       | Sage      | #7AE7BF   | ![#7AE7BF](https://via.placeholder.com/20/7AE7BF/000000?text=+) |
-| 3       | Grape     | #DBADFF   | ![#DBADFF](https://via.placeholder.com/20/DBADFF/000000?text=+) |
-| 4       | Flamingo  | #FF887C   | ![#FF887C](https://via.placeholder.com/20/FF887C/000000?text=+) |
-| 5       | Banana    | #FBD75B   | ![#FBD75B](https://via.placeholder.com/20/FBD75B/000000?text=+) |
-| 6       | Tangerine | #FFB878   | ![#FFB878](https://via.placeholder.com/20/FFB878/000000?text=+) |
-| 7       | Peacock   | #46D6DB   | ![#46D6DB](https://via.placeholder.com/20/46D6DB/000000?text=+) |
-| 8       | Graphite  | #E1E1E1   | ![#E1E1E1](https://via.placeholder.com/20/E1E1E1/000000?text=+) |
-| 9       | Blueberry | #5484ED   | ![#5484ED](https://via.placeholder.com/20/5484ED/000000?text=+) |
-| 10      | Basil     | #51B749   | ![#51B749](https://via.placeholder.com/20/51B749/000000?text=+) |
-| 11      | Tomato    | #DC2127   | ![#DC2127](https://via.placeholder.com/20/DC2127/000000?text=+) |
+| colorID | Name      | hexCode |
+| ------- | --------- | ------- |
+| 1       | Lavender  | #A4BDFC |
+| 2       | Sage      | #7AE7BF |
+| 3       | Grape     | #DBADFF |
+| 4       | Flamingo  | #FF887C |
+| 5       | Banana    | #FBD75B |
+| 6       | Tangerine | #FFB878 |
+| 7       | Peacock   | #46D6DB |
+| 8       | Graphite  | #E1E1E1 |
+| 9       | Blueberry | #5484ED |
+| 10      | Basil     | #51B749 |
+| 11      | Tomato    | #DC2127 |
 
 ---
 
@@ -72,10 +72,10 @@ Edit your configuration in [`config.json`](config.json):
 3. **Find your chat/channel ID** (e.g., use [userinfobot](https://t.me/userinfobot)).
 4. **Edit your `env.py`** (not versioned, see `.gitignore`):
 
-    ```python
-    telegramToken = "YOUR_BOT_TOKEN"
-    telegramChat = "YOUR_CHAT_ID"
-    ```
+   ```python
+   telegramToken = "YOUR_BOT_TOKEN"
+   telegramChat = "YOUR_CHAT_ID"
+   ```
 
 5. **Run the main script** (`runner.py`)—notifications are sent whenever there are relevant changes.
 
@@ -117,21 +117,21 @@ Edit your configuration in [`config.json`](config.json):
 ### 📅 Google Calendar Automation
 
 1. **Create a Google Cloud Project:**
-    - Go to [Google Cloud Console](https://console.cloud.google.com/).
-    - Create a new project.
+   - Go to [Google Cloud Console](https://console.cloud.google.com/).
+   - Create a new project.
 2. **Enable the Google Calendar API:**
-    - In the Cloud Console, navigate to "APIs & Services" > "Dashboard".
-    - Click "Enable APIs and Services" and search for "Google Calendar API".
-    - Click "Enable".
+   - In the Cloud Console, navigate to "APIs & Services" > "Dashboard".
+   - Click "Enable APIs and Services" and search for "Google Calendar API".
+   - Click "Enable".
 3. **Create a Service Account and Credentials:**
-    - In "APIs & Services" > "Credentials", click "Create Credentials" > "Service account".
-    - Follow the prompts and download the JSON key file (`credentials.json`). Place it in your project directory.
+   - In "APIs & Services" > "Credentials", click "Create Credentials" > "Service account".
+   - Follow the prompts and download the JSON key file (`credentials.json`). Place it in your project directory.
 4. **Set up Python Environment and install dependencies:**
-    ```sh
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-    ```
+   ```sh
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
 5. **Configure your project** as described above.
 
 ---
@@ -143,6 +143,7 @@ Edit your configuration in [`config.json`](config.json):
 ```sh
 python showCalandars.py
 ```
+
 Finds or creates a calendar called "school" and outputs its URL.
 
 ### Share a Calendar
@@ -150,6 +151,7 @@ Finds or creates a calendar called "school" and outputs its URL.
 ```sh
 python shareCalendar.py
 ```
+
 Shares the specified calendar with an email and generates `environment.json`.
 
 ### Flush (Delete All Events) from Calendar
@@ -157,6 +159,7 @@ Shares the specified calendar with an email and generates `environment.json`.
 ```sh
 python flush_calendar.py
 ```
+
 Deletes all events from the configured calendar.
 
 ### Run the Main Sync
@@ -164,6 +167,7 @@ Deletes all events from the configured calendar.
 ```sh
 python runner.py
 ```
+
 Syncs your Untis timetable to Google Calendar and sends Telegram notifications for changes.
 
 ---
