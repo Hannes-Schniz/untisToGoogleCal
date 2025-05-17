@@ -12,6 +12,7 @@ This tool transfers your Untis timetable to a Google Calendar and can **notify y
 - 🔔 **Telegram Notifications:** Get real-time alerts for schedule changes, cancellations, and exams.
 - 👥 **Calendar Sharing:** Share your school calendar with others via email.
 - 🧹 **Flush Calendar:** Delete all events from your school calendar with a single command.
+- 🛠️ **Admin CLI:** Interactive menu to run and configure all scripts with simulation and verbose modes.
 
 ---
 
@@ -70,12 +71,23 @@ Edit your configuration in [`config.json`](config.json):
 1. **Create a bot** via [BotFather](https://t.me/botfather) and get your token.
 2. **Add the bot** to your group/channel and allow it to post.
 3. **Find your chat/channel ID** (e.g., use [userinfobot](https://t.me/userinfobot)).
-4. **Edit your `env.py`** (not versioned, see `.gitignore`):
+4. **Edit your `environment.json`** (not versioned, see `.gitignore`):
 
-   ```python
-   telegramToken = "YOUR_BOT_TOKEN"
-   telegramChat = "YOUR_CHAT_ID"
+   ```json
+   {
+     "calendarID": "YOUR_CALENDAR_ID",
+     "cookie": "YOUR_SESSION_COOKIE",
+     "anonymous-school": "YOUR_SCHOOL_ID",
+     "telegramToken": "YOUR_BOT_TOKEN",
+     "telegramChat": "YOUR_CHAT_ID"
+   }
    ```
+
+   - `calendarID`: Your Google Calendar ID (created or found by `showCalandars.py`)
+   - `cookie`: Session cookie for Untis API access
+   - `anonymous-school`: Your Untis school identifier
+   - `telegramToken`: Telegram bot token
+   - `telegramChat`: Telegram chat or channel ID
 
 5. **Run the main script** (`runner.py`)—notifications are sent whenever there are relevant changes.
 
@@ -92,6 +104,7 @@ Edit your configuration in [`config.json`](config.json):
 
 ## 🧩 Modules
 
+- [`adminCLI.py`](adminCLI.py): **Interactive Admin CLI** to run and configure all scripts with options.
 - [`google_cal_connector.py`](google_cal_connector.py): Google Calendar API interface, event creation, and Telegram notification integration.
 - [`untis_connector.py`](untis_connector.py): Fetches data from Untis.
 - [`configReader.py`](configReader.py): Validates and reads configuration.
@@ -102,6 +115,41 @@ Edit your configuration in [`config.json`](config.json):
 - [`shareCalendarBot.py`](shareCalendarBot.py): Shares Google Calendar access (programmatic).
 - [`flush_calendar.py`](flush_calendar.py): Deletes all events from the school calendar.
 - [`showCalandars.py`](showCalandars.py): Finds or creates the "school" calendar and outputs its URL.
+
+---
+
+## 🖥️ **Admin CLI (Recommended)**
+
+The **Admin CLI** (`adminCLI.py`) is the recommended way to use and manage this project.  
+It provides an interactive menu to:
+
+- Select and run any script in the project.
+- Toggle simulation and verbose modes.
+- Set output files for script results.
+- Change/remove options before running scripts.
+- See which options are supported for each script.
+- View help for each script.
+
+### Start the Admin CLI
+
+```sh
+python adminCLI.py
+```
+
+**Navigation:**
+
+- `↑/↓` : Navigate scripts or options
+- `Enter` : Run selected script with chosen options
+- `h` : Show help for selected script
+- `p` : Change/remove options (simulation, verbose, output file, etc.)
+- Option keys (e.g. `s`, `v`, `o`) : Toggle options directly
+- `q` : Quit
+
+**Example:**
+
+- Toggle simulation mode (`s`) and verbose mode (`v`), then run the main sync script.
+- Set an output file to save results.
+- Only supported options for each script are enabled.
 
 ---
 
@@ -132,13 +180,26 @@ Edit your configuration in [`config.json`](config.json):
    source venv/bin/activate
    pip install -r requirements.txt
    ```
-5. **Configure your project** as described above.
+5. **Edit your `environment.json`** as described above.
 
 ---
 
 ## 🚀 Usage
 
-### Show or Create a Calendar
+### **Recommended: Use the Admin CLI**
+
+```sh
+python adminCLI.py
+```
+
+- Interactive menu for all scripts and options.
+- See above for navigation and features.
+
+---
+
+### Individual Scripts
+
+#### Show or Create a Calendar
 
 ```sh
 python showCalandars.py
@@ -146,15 +207,15 @@ python showCalandars.py
 
 Finds or creates a calendar called "school" and outputs its URL.
 
-### Share a Calendar
+#### Share a Calendar
 
 ```sh
 python shareCalendar.py
 ```
 
-Shares the specified calendar with an email and generates `environment.json`.
+Shares the specified calendar with an email and generates/updates `environment.json`.
 
-### Flush (Delete All Events) from Calendar
+#### Flush (Delete All Events) from Calendar
 
 ```sh
 python flush_calendar.py
@@ -162,7 +223,7 @@ python flush_calendar.py
 
 Deletes all events from the configured calendar.
 
-### Run the Main Sync
+#### Run the Main Sync
 
 ```sh
 python runner.py
