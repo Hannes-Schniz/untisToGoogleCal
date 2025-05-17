@@ -4,8 +4,8 @@ import re
 
 class configExtract:
     conf = None
-    def __init__(self):
-        with open("config.json","r") as conf:
+    def __init__(self, file):
+        with open(file,"r") as conf:
            conf = json.load(conf)
         try:
             #self.configCheck(conf) 
@@ -23,3 +23,5 @@ class configExtract:
             raise Exception("No valid class ID configured")
         if re.match(conf['weeksAhead'], "[0-9]") == None or len(conf['weeksAhead']) != 1:
             raise Exception("No valid weeks lookahead configured")
+        
+    

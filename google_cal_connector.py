@@ -6,7 +6,7 @@ from googleapiclient.discovery import build
 from datetime import datetime, timedelta
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-import json
+from configReader import configExtract
 import pytz
 import telegramBot
 
@@ -24,10 +24,8 @@ class googleCalCon:
     def __init__(self, weeks):
         service = self.authenticate()
         self.service = service
-        with open("environment.json") as env:
-            self.env = json.load(env)
+        self.env = configExtract("environment.json").conf
         self.events = self.getEntries(weeks)
-        #print(self.events)
     
     def authenticate(self):
         SCOPES = ['https://www.googleapis.com/auth/calendar']
@@ -57,7 +55,7 @@ class googleCalCon:
             return
         
         self.sendMessage(namePrefix, name, location, description, start, end)
-        created_event = self.service.events().insert(calendarId=self.env['calendarID'], body=event).execute()
+        self.service.events().insert(calendarId=self.env['calendarID'], body=event).execute()
         
     def sendMessage(self,state, summary, location, description, start, end):
         if state.strip() == 'EXAM':
@@ -90,22 +88,14 @@ class googleCalCon:
         return events
     
     def eventExists(self, event, eventList):
-        #print(event['summary'])
         summary = event['summary']
-        location = event['location']
-        description = event['description']
         
         start = event['start'].get('dateTime')
         end = event['end'].get('dateTime')
-        #print(str(end)+"test", str(start))
         new_start = self.normalize_datetime_string(start)
         new_end = self.normalize_datetime_string(end)
        
-        #start = event['start']['dateTime']
-        #end = event['end']['dateTime']
         for existing_event in eventList:
-            #ex_start = self.normalize_datetime_string(existing_event['start'].get('dateTime'))
-            #ex_end = self.normalize_datetime_string(existing_event['end'].get('dateTime'))
             ex_start = existing_event['start'].get('dateTime')
             ex_end = existing_event['end'].get('dateTime')
             # Compare event properties
@@ -114,15 +104,7 @@ class googleCalCon:
                 and ex_start == new_start
                 and ex_end == new_end
             ):
-                #print(existing_event, event)
                 return True  # Event already exists
-
-        return False  # Event does not exist
-        
-        for extEvent in eventList:
-            if self.eql(extEvent,event):
-                return True
-        return False
     
     def normalize_datetime_string(self, datetime_string):
         try:

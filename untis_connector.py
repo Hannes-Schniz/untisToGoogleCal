@@ -1,14 +1,17 @@
 import requests
+from configReader import configExtract
 
 class exporter:
     
     urlRest = "https://erato.webuntis.com/WebUntis/api/rest/view/v1/timetable/entries"
     
+    conf = configExtract("environment.json").conf
+    
     headers = {
     'accept': 'application/json, text/plain, */*',
     'accept-language': 'de-DE,de;q=0.9,en-DE;q=0.8,en;q=0.7,en-US;q=0.6',
-    'anonymous-school': 'HH-Schule-Karlsruhe',
-    'cookie': 'schoolname="_aGgtc2NodWxlLWthcmxzcnVoZQ=="; Tenant-Id="4240600";'
+    'anonymous-school': conf['anonymous-school'],
+    'cookie': conf['cookie']
 }
 
     def getElementMap(self, elements):

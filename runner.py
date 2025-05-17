@@ -8,7 +8,7 @@ untis = exporter()
 
 
 try:
-    conf = configExtract().conf
+    conf = configExtract("config.json").conf
 except:
     sys.exit()
     
