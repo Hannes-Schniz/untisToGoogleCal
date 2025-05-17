@@ -1,39 +1,31 @@
-# Untis to google calendar transfer tool
+Untis to Google Calendar Transfer Tool
 
-This tool transfers your untis calendar to a specified google calendar.
+This tool transfers your Untis timetable to a Google Calendar and can notify you of important changes via Telegram.
+🚀 Features
 
-It utilizes a publicly accessibale UNTIS API to retrieve all important Information about lessons and budles them into calendar entries.
-A calendar entry is built as follows:
+    🪞 Live Schedule Sync: Mirrors your Untis schedule in Google Calendar.
+    ➕ Additive Updates: Previous calendar entries are preserved; nothing is deleted.
+    🖋️ Configurable Entries: Customize what info gets added to the calendar.
+    🔔 Telegram Notifications: Get real-time alerts for schedule changes, cancellations, and exams.
 
-```
-    'summary': [CHANGED|CANCELLED]Subject name,
-    'location': roomnumber,
-    'description': period Text,
-    'color': [purple:regular|yellow:changed|red:cancelled]
-```
+⚙️ Configuration
 
-**Advantages of this tool**
+Edit your configuration in the appropriate file(s):
 
-- 🪞 See all the most recent changes in your untis schedule mirrored in your calendar
-- ➕ Additive procedure (No entries are deleted, previous versions of the lessons are preserved)
-- 🖋️ Configuration for The Information added to the calendar
+    group: "A" or "B"
+    classID: String ID from the Untis API
+    color-scheme:
+        primary: Google Calendar color code (string)
+        cancelled: Google Calendar color code (string)
+        changed: Google Calendar color code (string)
+        exams: Google Calendar color code (string)
+    weeksAhead: Number of weeks to look ahead (integer)
 
----
+Example:
+JSON
 
-# ⚙️ Configuration
-
-- group: [A|B]
-- classID: ID found in the untis API as string
-- color-scheme:
-  - primary: google calendar color code as string
-  - cancelled: google calendar color code as string
-  - changed: google calendar color code as string
-- weeksAhead: number of weeks to look ahead as string
-
-**Defaults:**
-
-```
-"group": "B",
+{
+  "group": "B",
   "classID": "3306",
   "color-scheme": {
     "primary": "1",
@@ -42,142 +34,106 @@ A calendar entry is built as follows:
     "exams": "10"
   },
   "weeksAhead": 1
-```
+}
 
-🖍️ **color codes**
+🖍️ Color Codes
+colorID	Name	hexCode
+1	Lavender	#A4BDFC
+2	Sage	#7AE7BF
+3	Grape	#DBADFF
+4	Flamingo	#FF887C
+5	Banana	#FBD75B
+6	Tangerine	#FFB878
+7	Peacock	#46D6DB
+8	Graphite	#E1E1E1
+9	Blueberry	#5484ED
+10	Basil	#51B749
+11	Tomato	#DC2127
+None	Calendar's color	
+📢 Telegram Notification Feature
 
-| colorID | Name                  | hexCode |
-| ------- | --------------------- | ------- |
-| 1       | Lavender              | #A4BDFC |
-| 2       | Sage                  | #7AE7BF |
-| 3       | Grape                 | #DBADFF |
-| 4       | Flamingo              | #FF887C |
-| 5       | Banana                | #FBD75B |
-| 6       | Tangerine             | #FFB878 |
-| 7       | Peacock               | #46D6DB |
-| 8       | Graphite              | #E1E1E1 |
-| 9       | Blueberry             | #5484ED |
-| 10      | Basil                 | #51B749 |
-| 11      | Tomato                | #DC2127 |
-| None    | Color of the calendar |         |
+Stay up to date with instant Telegram alerts for schedule changes.
+How It Works
 
----
+    The Telegram bot sends formatted notifications about changes, cancellations, or exams to your chosen Telegram chat/channel.
 
-# 🔌 Endpoints
+Setup
 
-- https://erato.webuntis.com/WebUntis/api/public/timetable/weekly/data
-- https://www.googleapis.com/auth/calendar
+    Create a bot via BotFather and get your token.
+    Add the bot to your group/channel and allow it to post.
+    Find your chat/channel ID (for example, use userinfobot).
+    Edit the env file:
+    Python
 
----
+    telegramToken = "YOUR_BOT_TOKEN"
+    telegramChat = "YOUR_CHAT_ID"
 
-# 🧩 Modules
+    Run the script—notifications are sent whenever there are relevant changes.
 
-- google_cal_connector.py
-  Handles all communication with the google calendar API
-- untis_connector.py
-  Retrieves all data from the public untis API
-- configReader.py
-  Reads all configs and does a regex validation
-- runner.py
-  Executes the script
+Example Notification:
+Code
 
----
+<b>Mathematik (CHANGED)</b>
+<b>Raum:</b> 101
+<b>Stunde</b>: 17.05.2025 08:00-09:00
+<b>Beschreibung:</b> Vertretung: Herr Müller
 
-# 🛠️ Setup
+🧩 Modules
 
-## 📅 Google Calendar Automation Setup ☁️
+    google_cal_connector.py – Google Calendar API interface
+    untis_connector.py – Fetches data from Untis
+    configReader.py – Validates and reads configuration
+    runner.py – Runs the main script
+    telegramBot.py – Sends Telegram messages
+    telegramBotInteractions.py – Starts Telegram bot interactions
+    shareCalendarBot.py – Shares Google Calendar access
 
-This guide will walk you through setting up a Google Cloud project, creating a service account, and using the provided Python scripts (`showCalendar.py` and `shareCalendar.py`) to manage your Google Calendar.
+🔌 API Endpoints Used
 
-### 🛠️ Prerequisites
+    https://erato.webuntis.com/WebUntis/api/public/timetable/weekly/data
+    https://www.googleapis.com/auth/calendar
 
-- A Google account 📧.
-- Python 3.6 or later installed 🐍.
-- `pip` (Python package installer) 📦.
+🛠️ Setup
+📅 Google Calendar Automation
 
-### ☁️ Setup Google Cloud Project
+    Create a Google Cloud Project:
+        Go to Google Cloud Console.
+        Create a new project.
+    Enable the Google Calendar API:
+        In the Cloud Console, navigate to "APIs & Services" > "Dashboard".
+        Click "Enable APIs and Services" and search for "Google Calendar API".
+        Click "Enable".
+    Create a Service Account and Credentials:
+        In "APIs & Services" > "Credentials", click "Create Credentials" > "Service account".
+        Follow the prompts and download the JSON key file (credentials.json). Place it in your project directory.
+    Set up Python Environment and install dependencies:
+    sh
 
-1.  **Go to the Google Cloud Console:**
-    - Open your web browser and navigate to [console.cloud.google.com](https://console.cloud.google.com/) 🌐.
-2.  **Create a New Project:**
-    - Click on the project selection dropdown at the top of the page 🔽.
-    - Click "New Project" ➕.
-    - Enter a project name and click "Create" ✅.
-3.  **Enable the Google Calendar API:**
-    - In the Cloud Console, navigate to "APIs & Services" > "Dashboard" 📊.
-    - Click "Enable APIs and Services" ➕.
-    - Search for "Google Calendar API" and click on it 🔍.
-    - Click "Enable" 👍.
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
 
-### 🔑 Create a Service Account
+    Configure your project as described above.
 
-1.  **Navigate to Service Accounts:**
-    - In the Cloud Console, navigate to "APIs & Services" > "Credentials" 🔐.
-    - Click "Create Credentials" and select "Service account" 👤.
-2.  **Service Account Details:**
-    - Enter a service account name 📝.
-    - Click "Create and Continue" 👉.
-    - (Optional) Assign roles. For basic calendar access, you can use "Project" > "Viewer" or any more specific calendar role 🛡️.
-    - Click "Continue" and then "Done" 🎉.
-3.  **Create a JSON Key:**
-    - Click on the newly created service account 🖱️.
-    - Go to the "Keys" tab 🔑.
-    - Click "Add Key" and select "Create new key" ➕.
-    - Choose "JSON" as the key type and click "Create" 💾.
-    - A JSON file will be downloaded. **Store this file securely.** Rename it to `credentials.json` and place it in the same directory as your Python scripts 📂.
+🚀 Usage
+Show or Create a Calendar
+sh
 
-### 📦 Setup Python Virtual Environment and Install Dependencies
+python showCalendar.py
 
-1.  **Create a Virtual Environment:**
-    - Open your terminal or command prompt 💻.
-    - Navigate to the directory containing your scripts 🧭.
-    - Run the following command to create a virtual environment:
-      - On Windows: `python -m venv venv`
-      - On macOS/Linux: `python3 -m venv venv`
-2.  **Activate the Virtual Environment:**
+Finds or creates a calendar called "school" and outputs its URL.
+Share a Calendar
+sh
 
-    - On Windows: `venv\Scripts\activate`
-    - On macOS/Linux: `source venv/bin/activate`
+python shareCalendar.py
 
-3.  **Install Dependencies:**
-    - Run the following command to install the required Python libraries: `pip install -r requirements.txt`
+Shares the specified calendar with an email and generates environment.json.
+🔒 Security Notes
 
-### 🚀 Using the Scripts
+    Protect credentials.json: Never share or commit this file.
+    Restrict Service Account Permissions: Only grant what’s necessary.
+    Rotate Keys Regularly: Reduce risk if credentials are ever leaked.
 
-#### `showCalendar.py` 🔍
+📄 License
 
-This script finds or creates a calendar called "school" and outputs its URL.
-
-1.  **Place the Script:**
-    - Save `showCalendar.py` and `credentials.json` in the same directory 📂.
-2.  **Run the Script:**
-    - Open your terminal or command prompt 💻.
-    - Ensure your virtual environment is activated.
-    - Navigate to the directory containing the script 🧭.
-    - Run the script: `python showCalendar.py` ▶️.
-3.  **Output:**
-    - The script will output the calendar's ID and URL, indicating whether it was found or created 📋.
-
-#### `shareCalendar.py` 🤝
-
-This script shares a specific calendar with a user-provided email address. It also generates a json file with the calendar ID.
-
-1.  **Place the Script:**
-    - Save `shareCalendar.py` and `credentials.json` in the same directory 📂.
-2.  **Run the Script:**
-    - Open your terminal or command prompt 💻.
-    - Ensure your virtual environment is activated.
-    - Navigate to the directory containing the script 🧭.
-    - Run the script: `python shareCalendar.py` ▶️.
-3.  **Interactive Input:**
-    - The script will prompt you to enter the email address to share the calendar with 📧.
-    - The script will prompt you to enter the calendar ID 🆔.
-4.  **Output:**
-    - The script will output a confirmation message indicating that the calendar has been shared ✅.
-    - A `environment.json` file will be generated in the same directory, containing the calendar ID 📄.
-
-### 🔒 Security Notes
-
-- **Protect your `credentials.json` file:** This file contains sensitive information. Do not share it or commit it to version control systems 🛡️.
-- **Restrict service account permissions:** Grant only the necessary permissions to the service account 🔑.
-- **Regularly review and rotate service account keys:** This helps minimize the impact of compromised keys 🔄.
+MIT or your preferred license here.
