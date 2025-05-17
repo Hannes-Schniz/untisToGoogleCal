@@ -22,7 +22,7 @@ for i in range(int(conf['weeksAhead'])+1):
     start = dt - timedelta(days=dt.weekday())
     end = (start + timedelta(days=5)).strftime('%Y-%m-%d')
     start = start.strftime('%Y-%m-%d')
-    periods += untis.getData(start=start, end=end, classID=conf['classID'], group=conf['group'])
+    periods += untis.getData(start=start, end=end, classID=conf['classID'])
 
 for period in periods:
     namePrefix = ""

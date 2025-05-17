@@ -19,7 +19,7 @@ class exporter:
         return elementMap
             
 
-    def getData(self, start, end, classID, group):
+    def getData(self, start, end, classID):
         
         optionsRest = "?start="+start+"&end="+end+"&format=2&resourceType=CLASS&resources="+classID+"&periodTypes=&timetableType=STANDARD"
         

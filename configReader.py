@@ -19,8 +19,6 @@ class configExtract:
            
 
     def configCheck(self,conf):
-        if conf['group'] not in ["A","B"]:
-            raise Exception("Group not configured")
         if re.match(conf['classID'], "[0-9][0-9][0-9][0-9]") == None or len(conf['classID']) != 4:
             raise Exception("No valid class ID configured")
         if re.match(conf['weeksAhead'], "[0-9]") == None or len(conf['weeksAhead']) != 1:
