@@ -4,15 +4,37 @@ from datetime import datetime, timedelta, timezone
 from configReader import configExtract
 import sys
 
-untis = exporter()
+# Help text for CLI usage
+HELP_TEXT = """
+Syncs your Untis timetable to Google Calendar and sends Telegram notifications for changes.
 
+Usage:
+  python runner.py
+
+Options:
+  -h, --help    Show this help message and exit
+
+This script fetches your Untis timetable and updates your Google Calendar accordingly.
+It also sends notifications via Telegram if configured.
+"""
+
+# Show help and exit if -h or --help is passed
+if len(sys.argv) > 1 and sys.argv[1] in ("-h", "--help"):
+    print(HELP_TEXT)
+    sys.exit(0)
+
+simulate = "--simulate" in sys.argv
+
+verbose = "--verbose" in sys.argv or "-v" in sys.argv
+
+untis = exporter()
 
 try:
     conf = configExtract("config.json").conf
 except:
     sys.exit()
     
-googleCal = googleCalCon(conf['weeksAhead'])
+googleCal = googleCalCon(conf['weeksAhead'], simulate=simulate, verbose=verbose)
 
 periods = []
 
@@ -53,6 +75,6 @@ for period in periods:
                           end=endTime,
                           background=color
                           )
-    
-    
+
+
 
