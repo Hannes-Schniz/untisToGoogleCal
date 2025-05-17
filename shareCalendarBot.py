@@ -44,14 +44,6 @@ def share_calendar_interactive(email):
         created_rule = service.acl().insert(calendarId=calendar_id, body=rule).execute()
 
         return f'Calendar successfully shared with {shared_email}.'
-        print(f'Access rule ID: {created_rule["id"]}')
-
-        # Generate JSON file with calendar ID
-        calendar_data = {"calendarID": calendar_id}
-        with open("environment.json", "w") as f:
-            json.dump(calendar_data, f, indent=2)
-
-        print(f'Calendar ID saved to calendar_id.json')
 
     except Exception as e:
         print(f'Error sharing calendar: {e}')
