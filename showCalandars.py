@@ -1,11 +1,24 @@
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+import sys
 
 # Path to the credentials.json file
 SERVICE_ACCOUNT_FILE = 'credentials.json'
 
 # Required permissions
 SCOPES = ['https://www.googleapis.com/auth/calendar']
+
+HELP_TEXT = """
+Finds or creates a calendar called "school" and prints its URL.
+
+Usage:
+  python showCalandars.py
+
+Options:
+  -h, --help    Show this help message and exit
+
+This script will output the calendar's URL and ID. If the calendar does not exist, it will be created automatically.
+"""
 
 def get_or_create_school_calendar():
     """Checks if a calendar named "school" exists, and creates it if not. Outputs the URL."""
@@ -44,4 +57,7 @@ def get_or_create_school_calendar():
         print(f'Error managing calendars: {e}')
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] in ("-h", "--help"):
+        print(HELP_TEXT)
+        sys.exit(0)
     get_or_create_school_calendar()
