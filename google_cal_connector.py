@@ -43,14 +43,8 @@ class googleCalCon:
 
         return build('calendar', 'v3', credentials=credentials)
     
-    #Dateformat : YYYY-MM-DDTHH:MM
-    def createEntry(self, name, location, description, start, end, namePrefix, background, simulate=None, verbose=None):
-        # Allow override per call, else use instance setting
-        if simulate is None:
-            simulate = self.simulate
-        if verbose is None:
-            verbose = self.verbose
-
+    
+    def buildEvent(self, name, location, description, start, end, namePrefix, background):
         event = {
             'summary': namePrefix + name,
             'location': location,
@@ -65,9 +59,21 @@ class googleCalCon:
             },
             'colorId': background
         }
+        return event
+    
+    #Dateformat : YYYY-MM-DDTHH:MM
+    def createEntry(self, name, location, description, start, end, namePrefix, background, simulate=None, verbose=None):
+        # Allow override per call, else use instance setting
+        if simulate is None:
+            simulate = self.simulate
+        if verbose is None:
+            verbose = self.verbose
+
+        event = self.buildEvent(name, location, description, start, end, namePrefix, background)
         if verbose:
             print(f"[VERBOSE] Checking if event exists: {event['summary']} ({event['start']['dateTime']} - {event['end']['dateTime']})")
-        if self.eventExists(event, self.events):
+        if self.eventExists(event, self.events) != False:
+                    
             if simulate or verbose:
                 print(f"[SIMULATION][VERBOSE] Event already exists and would be skipped: {event['summary']}")
             return
@@ -131,6 +137,18 @@ class googleCalCon:
             return []
         return events
     
+    
+    def deleteOldEvents(self, toRemove):
+        calendarEvents = self.getEntries(self.weeks)
+        print(f"Events to delete")
+        print("------------------")
+        for event in toRemove:
+            id = self.eventExists(event=event, eventList=calendarEvents)
+            if id != False:
+                print(event)
+                self.service.events().delete(calendarId=self.env['calendarID'], eventId=id).execute()
+        print("--------------------")
+    
     def eventExists(self, event, eventList):
         summary = event['summary']
         start = event['start'].get('dateTime')
@@ -147,7 +165,7 @@ class googleCalCon:
             ):
                 if self.verbose:
                     print(f"[VERBOSE] Found existing event: {summary} ({new_start} - {new_end})")
-                return True  # Event already exists
+                return existing_event['id']  # Event already exists
         return False
     
     def normalize_datetime_string(self, datetime_string):

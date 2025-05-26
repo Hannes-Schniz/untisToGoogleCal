@@ -35,14 +35,31 @@ class exporter:
         
         periods = []
         
+        removed = []
+        
         for day in raw_data['days']:
             date = day['date']
             for entry in day['gridEntries']:
                 status = entry['status']
                 classType = entry['type']
                 
+                moved = entry['moved'] != None
+                
+                cancelled = entry['status'] == "CANCELLED"
+                
                 start = entry['duration']['start']
                 end = entry['duration']['end']
+                
+                if moved:
+                    start = entry['moved']['start']
+                    end = entry['moved']['end']
+                    rstart = entry['duration']['start']
+                    rend = entry['duration']['end']
+                
+                if cancelled:
+                    rstart = entry['duration']['start']
+                    rend = entry['duration']['end']
+                
                 if not entry['position1']:
                     continue
                 shortName = entry['position1'][0]['current']['shortName']
@@ -59,8 +76,20 @@ class exporter:
                                   'start':start,
                                   'end':end,
                                   'type': classType})
+                
+                if moved or cancelled:
+                    removed.append({'name':shortName, 
+                                  'location': room,
+                                  'periodText': longName,
+                                  'cellState': status,
+                                  'date':date,
+                                  'start':rstart,
+                                  'end':rend,
+                                  'type': classType})
+                
                 #if verbose:
                 #    print(f"[VERBOSE] period: {periods}") 
         if verbose:
-            print(f"[VERBOSE] {len(periods)} fetched.")  
-        return periods
+            print(f"[VERBOSE] {len(periods)} fetched to add.")
+            print(f"[VERBOSE] {len(removed)} fetched to remove.")    
+        return [periods, removed]

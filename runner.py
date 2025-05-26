@@ -38,13 +38,17 @@ googleCal = googleCalCon(conf['weeksAhead'], simulate=simulate, verbose=verbose)
 
 periods = []
 
+toRemove = []
+
 for i in range(int(conf['weeksAhead'])+1):
     currDate = (datetime.now(timezone.utc) + timedelta(days=i*7) ).strftime('%Y-%m-%d')
     dt = datetime.strptime(currDate, '%Y-%m-%d')
     start = dt - timedelta(days=dt.weekday())
     end = (start + timedelta(days=5)).strftime('%Y-%m-%d')
     start = start.strftime('%Y-%m-%d')
-    periods += untis.getData(start=start, end=end, classID=conf['classID'], verbose=verbose)
+    data = untis.getData(start=start, end=end, classID=conf['classID'], verbose=verbose)
+    periods += data[0]
+    toRemove += data[1]
 
 for period in periods:
     namePrefix = ""
@@ -75,6 +79,47 @@ for period in periods:
                           end=endTime,
                           background=color
                           )
+    
+oldEvents = []
+
+for mark in toRemove:
+    namePrefix = ""
+    color = conf['color-scheme']['primary']
+    if mark['cellState'] == 'CANCELLED':
+        namePrefix = "CANCELLED "
+        color = conf['color-scheme']['cancelled']
+    if mark['cellState'] == 'CHANGED':
+        namePrefix = "CHANGED "
+        color = conf['color-scheme']['changed']
+    if mark['cellState'] == 'ADDITIONAL':
+        namePrefix = "ADDITIONAL "
+        color = conf['color-scheme']['changed']
+    if mark['type'] == 'EXAM':
+        namePrefix = "EXAM "
+        color = conf['color-scheme']['exam']
+    startTime = mark['start']
+    endTime = mark['end']
+    if mark['name'] == None:
+        continue
+    
+    oldEvent = googleCal.buildEvent(name=mark['name'],
+                          namePrefix=namePrefix,
+                          location=mark['location'], 
+                          description=mark['periodText'] + "\n" + mark['cellState'],
+                          start=startTime,
+                          end=endTime,
+                          background=color)
+    
+    print(oldEvent)
+    
+    
+    oldEvents += [oldEvent]
+
+googleCal.deleteOldEvents(oldEvents)
+    
+    
+
+
 
 
 
