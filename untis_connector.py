@@ -22,7 +22,7 @@ class exporter:
         return elementMap
             
 
-    def getData(self, start, end, classID):
+    def getData(self, start, end, classID, verbose=False):
         
         optionsRest = "?start="+start+"&end="+end+"&format=2&resourceType=CLASS&resources="+classID+"&periodTypes=&timetableType=STANDARD"
         
@@ -58,5 +58,9 @@ class exporter:
                                   'date':date,
                                   'start':start,
                                   'end':end,
-                                  'type': classType})    
+                                  'type': classType})
+                #if verbose:
+                #    print(f"[VERBOSE] period: {periods}") 
+        if verbose:
+            print(f"[VERBOSE] {len(periods)} fetched.")  
         return periods
