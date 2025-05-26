@@ -4,12 +4,15 @@ from configReader import configExtract
 
 
 env = configExtract("environment.json").conf
+maint = configExtract("config.json").conf['maintenance'] == 1
 TOKEN = env["telegramToken"]
 chat_id = env["telegramChat"]
 
 def sendMessage(message):
     params = {"chat_id":chat_id,"text": message, "parse_mode": "HTML"}
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    if maint:
+        return
     requests.post(url=url, params=params)
     
 def createText(summary, location, description, date, start, end ):
