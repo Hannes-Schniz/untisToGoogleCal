@@ -45,20 +45,20 @@ class exporter:
                 
                 moved = entry['moved'] != None
                 
-                cancelled = entry['status'] == "CANCELLED"
-                
                 start = entry['duration']['start']
                 end = entry['duration']['end']
                 
-                if moved:
-                    start = entry['moved']['start']
-                    end = entry['moved']['end']
-                    rstart = entry['duration']['start']
-                    rend = entry['duration']['end']
+                oldTStart = ''
+                oldTEnd =''
                 
-                if cancelled:
-                    rstart = entry['duration']['start']
-                    rend = entry['duration']['end']
+                if moved:
+                    oldTStart = entry['duration']['start']
+                    oldTEnd = entry['duration']['end']
+                    
+                oldRoom = ''
+                
+                if entry['position2'][0]['removed']:
+                    oldRoom = entry['position2'][0]['removed']['displayName']
                 
                 if not entry['position1']:
                     continue
@@ -75,17 +75,10 @@ class exporter:
                                   'date':date,
                                   'start':start,
                                   'end':end,
-                                  'type': classType})
-                
-                if moved or cancelled:
-                    removed.append({'name':shortName, 
-                                  'location': room,
-                                  'periodText': longName,
-                                  'cellState': status,
-                                  'date':date,
-                                  'start':rstart,
-                                  'end':rend,
-                                  'type': classType})
+                                  'type': classType,
+                                  'oldTStart':oldTStart,
+                                  'oldTEnd':oldTEnd,
+                                  'oldRoom':oldRoom})
                 
                 #if verbose:
                 #    print(f"[VERBOSE] period: {periods}") 

@@ -140,14 +140,15 @@ class googleCalCon:
     
     def deleteOldEvents(self, toRemove):
         calendarEvents = self.getEntries(self.weeks)
-        print(f"Events to delete")
-        print("------------------")
+        print("\n")
+        print(f"[INFO] Events to delete")
+        print("--------------------------------------")
         for event in toRemove:
             id = self.eventExists(event=event, eventList=calendarEvents)
             if id != False:
-                print(event)
+                print(f"[INFO] Deleting event!")
                 self.service.events().delete(calendarId=self.env['calendarID'], eventId=id).execute()
-        print("--------------------")
+        print("--------------------------------------")
     
     def eventExists(self, event, eventList):
         summary = event['summary']
@@ -190,23 +191,6 @@ class googleCalCon:
 
         except ValueError:
             return None  # Return None if the string cannot be parsed
-    
-    def eql(self, eventOne, eventTwo):
-        params = ["description","summary", "location"]
-        for param in params:
-            try:
-                if eventOne[param] != eventTwo[param]:
-                    return False
-            except:
-                continue
-        
-        if not self.sameDatetime(eventOne['start']['dateTime'],eventTwo['start']['dateTime']):
-            return False
-        
-        if not self.sameDatetime(eventOne['end']['dateTime'],eventTwo['end']['dateTime']):
-            return False
-        
-        return True
     
     def sameDatetime(self,datetime, newTime):
         #split time from date

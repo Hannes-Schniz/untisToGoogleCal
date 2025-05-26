@@ -110,9 +110,6 @@ for mark in toRemove:
                           end=endTime,
                           background=color)
     
-    print(oldEvent)
-    
-    
     oldEvents += [oldEvent]
 
 googleCal.deleteOldEvents(oldEvents)
