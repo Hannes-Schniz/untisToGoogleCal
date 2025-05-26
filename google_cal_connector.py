@@ -97,7 +97,7 @@ class googleCalCon:
             else:
                 if verbose:
                     print(f"[VERBOSE] Sending Telegram message:\n{message}\n{'-'*40}")
-                telegramBot.sendMessage(message=message)
+                #telegramBot.sendMessage(message=message)
     
     
     def getEntries(self, weeks):
