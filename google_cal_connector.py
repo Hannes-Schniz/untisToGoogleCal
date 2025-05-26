@@ -24,6 +24,8 @@ class googleCalCon:
     weeks = None
     
     def __init__(self, weeks, simulate=False, verbose=False):
+        self.simulate = simulate  # Add simulation mode flag
+        self.verbose = verbose    # Add verbose mode flag
         service = self.authenticate()
         self.service = service
         self.env = configExtract("environment.json").conf
@@ -32,8 +34,7 @@ class googleCalCon:
         else:
             self.weeks = None
         self.events = self.getEntries(weeks)  
-        self.simulate = simulate  # Add simulation mode flag
-        self.verbose = verbose    # Add verbose mode flag
+        
     
     def authenticate(self):
         SCOPES = ['https://www.googleapis.com/auth/calendar']
@@ -97,7 +98,7 @@ class googleCalCon:
             else:
                 if verbose:
                     print(f"[VERBOSE] Sending Telegram message:\n{message}\n{'-'*40}")
-                #telegramBot.sendMessage(message=message)
+                telegramBot.sendMessage(message=message)
     
     
     def getEntries(self, weeks):
@@ -113,7 +114,7 @@ class googleCalCon:
             timeZone=str(self.target_timezone)  # Important: Use the timezone string
             ).execute()
         else:
-            minTime = (target_now).isoformat()
+            minTime = (target_now - timedelta(days=7)).isoformat()
             maxTime = (target_now + timedelta(days=7*weeks)).isoformat()
             events_result = self.service.events().list(
                 calendarId=self.env['calendarID'],
