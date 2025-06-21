@@ -44,6 +44,8 @@ if __name__ == '__main__':
     simulate = "--simulate" in sys.argv
     
     verbose = "--verbose" in sys.argv or "-v" in sys.argv
+    
+    yes = "-y" in sys.argv
 
     try:
         with open(ENVIRONMENT_FILE, 'r') as f:
@@ -54,7 +56,9 @@ if __name__ == '__main__':
             print("Simulation mode enabled. No events will be deleted.\n")
             delete_all_calendar_events(simulate=simulate, verbose=verbose)
         else:
-            confirmation = input(f"Are you sure you want to delete ALL events from calendar {calendar_id_to_clear}? (yes/no): ")
+            confirmation = True
+            if not yes:
+                confirmation = input(f"Are you sure you want to delete ALL events from calendar {calendar_id_to_clear}? (yes/no): ")
             if confirmation.lower() == 'yes':
                 delete_all_calendar_events(verbose=verbose)
             else:
