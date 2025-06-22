@@ -38,7 +38,7 @@ googleCal = googleCalCon(conf['weeksAhead'], simulate=simulate, verbose=verbose)
 
 periods = []
 
-for i in range(int(conf['weeksAhead'])+1):
+for i in range(int(conf['weeksAhead'])):
     currDate = (datetime.now(timezone.utc) + timedelta(days=i*7) ).strftime('%Y-%m-%d')
     dt = datetime.strptime(currDate, '%Y-%m-%d')
     start = dt - timedelta(days=dt.weekday())
