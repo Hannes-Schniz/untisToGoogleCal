@@ -66,15 +66,16 @@ for period in periods:
     if period['name'] == None:
         continue
     
-    #print(period['cellState'])
-    googleCal.createEntry(name=period['name'],
+    event = googleCal.buildEvent(name=period['name'],
                           namePrefix=namePrefix,
                           location=period['location'], 
                           description=period['periodText'] + "\n" + period['cellState'],
                           start=startTime,
                           end=endTime,
-                          background=color
-                          )
+                          background=color)
+    
+    #print(period['cellState'])
+    googleCal.createEntry(event)
 
 
 

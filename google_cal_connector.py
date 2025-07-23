@@ -44,27 +44,14 @@ class googleCalCon:
         return build('calendar', 'v3', credentials=credentials)
     
     #Dateformat : YYYY-MM-DDTHH:MM
-    def createEntry(self, name, location, description, start, end, namePrefix, background, simulate=None, verbose=None):
+    def createEntry(self, event):
         # Allow override per call, else use instance setting
         if simulate is None:
             simulate = self.simulate
         if verbose is None:
             verbose = self.verbose
 
-        event = {
-            'summary': namePrefix + name,
-            'location': location,
-            'description': description,
-            'start': {
-                'dateTime':  datetime.strptime(start, '%Y-%m-%dT%H:%M').isoformat(),
-                'timeZone':  str(self.target_timezone),
-            },
-            'end': {
-                'dateTime':  datetime.strptime(end, '%Y-%m-%dT%H:%M').isoformat(),
-                'timeZone':  str(self.target_timezone),
-            },
-            'colorId': background
-        }
+        
         if verbose:
             print(f"[VERBOSE] Checking if event exists: {event['summary']} ({event['start']['dateTime']} - {event['end']['dateTime']})")
         if self.eventExists(event, self.events):
@@ -78,16 +65,32 @@ class googleCalCon:
             print(f"  Description: {event['description']}")
             print(f"  Start: {event['start']['dateTime']}")
             print(f"  End: {event['end']['dateTime']}")
-            print(f"  Color: {background}")
+            print(f"  Color: {event['colorId']}")
             print("-" * 40)
             # Also print the Telegram message that would be sent
-            self.sendMessage(namePrefix, name, location, description, start, end, simulate=True, verbose=verbose)
+            #self.sendMessage(namePrefix, name, location, description, start, end, simulate=True, verbose=verbose)
         else:
             if verbose:
                 print(f"[VERBOSE] Creating event: {event['summary']}")
-            self.sendMessage(namePrefix, name, location, description, start, end, verbose=verbose)
+            #self.sendMessage(namePrefix, name, location, description, start, end, verbose=verbose)
             self.service.events().insert(calendarId=self.env['calendarID'], body=event).execute()
-        
+       
+    def buildEvent(self, name, location, description, start, end, namePrefix, background, simulate=None, verbose=None, oldEvent=""):
+        return {
+            'summary': namePrefix + name,
+            'location': location,
+            'description': description + "\n" +oldEvent,
+            'start': {
+                'dateTime':  datetime.strptime(start, '%Y-%m-%dT%H:%M').isoformat(),
+                'timeZone':  str(self.target_timezone),
+            },
+            'end': {
+                'dateTime':  datetime.strptime(end, '%Y-%m-%dT%H:%M').isoformat(),
+                'timeZone':  str(self.target_timezone),
+            },
+            'colorId': background
+        }
+     
     def sendMessage(self, state, summary, location, description, start, end, simulate=False, verbose=False):
         if state.strip() == 'EXAM':
             summary = state + " " + summary
