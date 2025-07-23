@@ -8,6 +8,7 @@ from googleapiclient.discovery import build
 from configReader import configExtract
 import pytz
 import telegramBot
+import re
 
 class googleCalCon:
     
@@ -44,7 +45,7 @@ class googleCalCon:
         return build('calendar', 'v3', credentials=credentials)
     
     #Dateformat : YYYY-MM-DDTHH:MM
-    def createEntry(self, event):
+    def createEntry(self, event, simulate=None, verbose=None):
         # Allow override per call, else use instance setting
         if simulate is None:
             simulate = self.simulate
@@ -54,7 +55,7 @@ class googleCalCon:
         
         if verbose:
             print(f"[VERBOSE] Checking if event exists: {event['summary']} ({event['start']['dateTime']} - {event['end']['dateTime']})")
-        if self.eventExists(event, self.events):
+        if self.eventExists(event, self.events) != False:
             if simulate or verbose:
                 print(f"[SIMULATION][VERBOSE] Event already exists and would be skipped: {event['summary']}")
             return
@@ -75,7 +76,7 @@ class googleCalCon:
             #self.sendMessage(namePrefix, name, location, description, start, end, verbose=verbose)
             self.service.events().insert(calendarId=self.env['calendarID'], body=event).execute()
        
-    def buildEvent(self, name, location, description, start, end, namePrefix, background, simulate=None, verbose=None, oldEvent=""):
+    def buildEvent(self, name, location, description, start, end, namePrefix, background, oldEvent=""):
         return {
             'summary': namePrefix + name,
             'location': location,
@@ -134,7 +135,7 @@ class googleCalCon:
             return []
         return events
     
-    def eventExists(self, event, eventList):
+    def eventExists(self, event, eventList, ignorePrefix=False, ignoreEnd=False):
         summary = event['summary']
         start = event['start'].get('dateTime')
         end = event['end'].get('dateTime')
@@ -143,14 +144,21 @@ class googleCalCon:
         for existing_event in eventList:
             ex_start = existing_event['start'].get('dateTime')
             ex_end = existing_event['end'].get('dateTime')
+            summarySame = existing_event.get('summary') == summary
+            if ignorePrefix and re.compile(f".*{summary}").match(existing_event.get('summary')):
+                summarySame = True
+            endSame = ex_end == new_end
+            if ignoreEnd:
+                endSame = True
+                
             if (
-                existing_event.get('summary') == summary
+                summarySame
                 and ex_start == new_start
-                and ex_end == new_end
+                and endSame
             ):
                 if self.verbose:
                     print(f"[VERBOSE] Found existing event: {summary} ({new_start} - {new_end})")
-                return True  # Event already exists
+                return existing_event  # Event already exists
         return False
     
     def normalize_datetime_string(self, datetime_string):
@@ -207,6 +215,24 @@ class googleCalCon:
             #print(split, '|', str(timeWithOffset)+':'+split[1].split(':')[1], newSplit[1])
             return False
         return True
+    
+    def manualRemove(self, events):
+        if self.verbose:
+            print("[Verbose] Event removal")
+        for event in events:
+            eventData = event['event']
+            existing = self.eventExists(eventData, self.events)
+            if existing != False:
+                if not self.simulate:
+                    try:
+                        
+                        self.service.events().delete(calendarId=self.env['calendarID'], eventId=existing['id']).execute()
+                        self.events = self.getEntries(self.weeks)
+                    except Exception as e:
+                        print("[ERROR] Couldnt remove Event")
+                        print(f"[ERROR] {e}")
+                    
+            
     
     def removeEvents(self, verbose=None):
         events = self.getEntries(self.weeks)

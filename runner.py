@@ -46,15 +46,47 @@ for i in range(int(conf['weeksAhead'])):
     start = start.strftime('%Y-%m-%d')
     periods += untis.getData(start=start, end=end, classID=conf['classID'], verbose=verbose)
 
+toRemove = []
+
 for period in periods:
     namePrefix = ""
     color = conf['color-scheme']['primary']
+    if period['moved'] == True:
+        toRemove.append({"state": "MOVED", "event": googleCal.buildEvent(name=period['name'],
+                      location=period['location'], 
+                      description=period['periodText'] + "\n" + period['cellState'],
+                      start=period['movedStart'],
+                      end=period['movedEnd'],
+                      namePrefix=period['cellState'],
+                      background="")})
     if period['cellState'] == 'CANCELLED':
         namePrefix = "CANCELLED "
         color = conf['color-scheme']['cancelled']
+        toRemove.append({"state": "CANCELLED", "event": googleCal.buildEvent(name=period['name'],
+                      location=period['location'], 
+                      description=period['periodText'] + "\n" + period['cellState'],
+                      start=period['start'],
+                      end=period['end'],
+                      namePrefix="",
+                      background="")})
+        
     if period['cellState'] == 'CHANGED':
         namePrefix = "CHANGED "
+        changedName=period['name']
+        changedRoom=period['location']
         color = conf['color-scheme']['changed']
+        if period['changedClass']:
+            changedName = period['changedClass']
+        if period['changedRoom']:
+            changedRoom = period['changedRoom']
+        
+        #toRemove.append({"state": "CHANGED", "event": googleCal.buildEvent(name=changedName,
+        #              location=changedRoom, 
+        #              description=period['periodText'] + "\n" + period['cellState'],
+        #              start=period['start'],
+        #              end=period['end'],
+        #              namePrefix=namePrefix,
+        #              background="")})
     if period['cellState'] == 'ADDITIONAL':
         namePrefix = "ADDITIONAL "
         color = conf['color-scheme']['changed']
@@ -76,6 +108,9 @@ for period in periods:
     
     #print(period['cellState'])
     googleCal.createEntry(event)
+#print(len(toRemove))
+print(toRemove)
+googleCal.manualRemove(toRemove)
 
 
 

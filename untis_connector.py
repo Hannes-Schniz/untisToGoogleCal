@@ -44,6 +44,11 @@ class exporter:
                 oldStart = None
                 oldEnd = None
                 changes = None
+                changedClass = None
+                changedRoom = None
+                subText=entry['substitutionText']
+                if subText == None:
+                    subText= ""
                 
                 start = entry['duration']['start']
                 end = entry['duration']['end']
