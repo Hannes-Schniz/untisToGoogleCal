@@ -43,13 +43,11 @@ class exporter:
                 
                 start = entry['duration']['start']
                 end = entry['duration']['end']
-                if not entry['position1']:
-                    continue
-                shortName = entry['position1'][0]['current']['shortName']
-                longName = entry['position1'][0]['current']['longName']
+                if entry['position1']:
+                    shortName = entry['position1'][0]['current']['shortName']
+                    longName = entry['position1'][0]['current']['longName']
                 if not entry['position2']:
-                    continue
-                room = entry['position2'][0]['current']['displayName']
+                    room = entry['position2'][0]['current']['displayName']
                 
                 periods.append({'name':shortName, 
                                   'location': room,
