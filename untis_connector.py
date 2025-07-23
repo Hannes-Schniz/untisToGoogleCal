@@ -61,9 +61,9 @@ class exporter:
                 if entry['status'] == "CHANGED":
                     changes = []
                     if entry['position1'][0]['removed'] != None:
-                        changes.append(entry['position1'][0]['removed'])
+                        changedClass= changes.append(entry['position1'][0]['removed']['displayName'])
                     if entry['position2'][0]['removed'] != None:
-                        changes.append(entry['position2'][0]['removed'])
+                        changedRoom= changes.append(entry['position2'][0]['removed']['shortName'])
                 
                 periods.append({'name':shortName, 
                                   'location': room,
@@ -75,7 +75,8 @@ class exporter:
                                   'type': classType,
                                   'movedStart': oldStart,
                                   'movedEnd': oldEnd,
-                                  'changes': changes,
+                                  'changedRoom': changedRoom,
+                                  'changedClass': changedClass,
                                   'moved': moved})
                 #if verbose:
                 #    if entry['statusDetail'] == "MOVED":
