@@ -40,14 +40,30 @@ class exporter:
             for entry in day['gridEntries']:
                 status = entry['status']
                 classType = entry['type']
+                moved = False
+                oldStart = None
+                oldEnd = None
+                changes = None
                 
                 start = entry['duration']['start']
                 end = entry['duration']['end']
                 if entry['position1']:
                     shortName = entry['position1'][0]['current']['shortName']
                     longName = entry['position1'][0]['current']['longName']
-                if not entry['position2']:
+                if entry['position2']:
                     room = entry['position2'][0]['current']['displayName']
+                if entry['statusDetail'] == "MOVED":
+                    moved = True
+                    oldStart = start
+                    oldEnd = end
+                    start = entry['moved']['start']
+                    end = entry['moved']['end']
+                if entry['status'] == "CHANGED":
+                    changes = []
+                    if entry['position1'][0]['removed'] != None:
+                        changes.append(entry['position1'][0]['removed'])
+                    if entry['position2'][0]['removed'] != None:
+                        changes.append(entry['position2'][0]['removed'])
                 
                 periods.append({'name':shortName, 
                                   'location': room,
@@ -56,9 +72,14 @@ class exporter:
                                   'date':date,
                                   'start':start,
                                   'end':end,
-                                  'type': classType})
+                                  'type': classType,
+                                  'movedStart': oldStart,
+                                  'movedEnd': oldEnd,
+                                  'changes': changes,
+                                  'moved': moved})
                 #if verbose:
-                #    print(f"[VERBOSE] period: {periods}") 
+                #    if entry['statusDetail'] == "MOVED":
+                #        print(f"[VERBOSE] period: {periods[-1]}") 
         if verbose:
             print(f"[VERBOSE] {len(periods)} fetched.")  
         return periods
